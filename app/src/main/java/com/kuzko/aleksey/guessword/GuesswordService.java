@@ -1,9 +1,11 @@
 package com.kuzko.aleksey.guessword;
 
 import com.kuzko.aleksey.guessword.datamodel.Phrase;
+import com.kuzko.aleksey.guessword.datamodel.User;
 
 import java.util.List;
 
+import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -13,6 +15,12 @@ import rx.Observable;
  */
 
 public interface GuesswordService {
-    @GET("rest/phrases")
-    Observable<List<Phrase>> getPhrases(@Query("userId") long userId);
+
+    String BASE_GUESSWORD_URL = "http://192.168.1.115:8080/guessword-1/rest/";
+
+    @GET("phrases")
+    Observable<Response<List<Phrase>>> fetchAllPhrases(@Query("user_id") long userId);
+
+    @GET("users")
+    Observable<List<User>> fetchAllUsers();
 }

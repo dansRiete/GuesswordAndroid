@@ -19,8 +19,8 @@ public class Phrase {
     private long indexEnd;
     private boolean trained;
 
-    public String represent(){
-        return id + ". " + foreignWord + " - " + nativeWord;
+    public String toString(){
+        return id + ". " + foreignWord + " - " + nativeWord + "\n";
     }
 
     public long getId() {
