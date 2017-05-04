@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Guessword</string>
     <string name="title_activity_learn">LearnActivity</string>
+    <string name="string_incorrect_login_password">Incorrect login/password combination</string>
 </resources>

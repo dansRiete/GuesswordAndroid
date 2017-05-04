@@ -2,16 +2,18 @@ package com.kuzko.aleksey.guessword;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kuzko.aleksey.guessword.datamodel.GuesswordRepository;
 import com.kuzko.aleksey.guessword.datamodel.Phrase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.android.schedulers.AndroidSchedulers;
@@ -19,11 +21,13 @@ import rx.schedulers.Schedulers;
 
 public class LearnActivity extends AppCompatActivity {
     private long userLoginId;
-    private TextView textViewTrainingLog;
     private List<Phrase> phrases;
+    private List<Phrase> askedPhrases = new ArrayList<>();
     private GuesswordService guesswordService;
     private Button nextButton;
     private int counter = 0;
+    private RecyclerAdapter recyclerAdapter;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +36,10 @@ public class LearnActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         userLoginId = retrieveUserLogin(savedInstanceState);
-        textViewTrainingLog = (TextView) findViewById(R.id.textViewTrainingLog);
         guesswordService = GuesswordRepository.getInstance().getGuesswordService();
         nextButton = (Button) findViewById(R.id.nextButton);
         nextButton.setClickable(false);
+
         guesswordService.fetchAllPhrases(userLoginId)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -52,6 +56,13 @@ public class LearnActivity extends AppCompatActivity {
                                     Toast.makeText(LearnActivity.this, "LearnActivity " + throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                                 }
                         );
+
+        recyclerAdapter = new RecyclerAdapter(askedPhrases);
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView.setHasFixedSize(true);    // If confident of rec.view layout size isn't changed by content
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(recyclerAdapter);
     }
 
     private long retrieveUserLogin(Bundle savedInstanceState){
@@ -70,9 +81,10 @@ public class LearnActivity extends AppCompatActivity {
     public void nextButtonClicked(View view) {
 
         if(counter < phrases.size()){
-            String setText = phrases.get(counter++).toString();
-            Log.d("INFO", "Set text " + setText);
-            textViewTrainingLog.setText(setText);
+            Phrase askedPhrase = phrases.get(counter++);
+            askedPhrases.add(askedPhrase);
+            recyclerAdapter.notifyDataSetChanged();
+            Log.d("INFO", "Phrase asked: " + askedPhrase.toString());
         }
     }
 }
