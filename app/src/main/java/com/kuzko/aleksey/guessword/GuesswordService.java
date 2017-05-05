@@ -16,7 +16,8 @@ import rx.Observable;
 
 public interface GuesswordService {
 
-    String BASE_GUESSWORD_URL = "http://192.168.0.105:8080/guessword-1/rest/";
+//    String BASE_GUESSWORD_URL = "http://192.168.0.105:8080/guessword-1/rest/";
+    String BASE_GUESSWORD_URL = "http://192.168.1.114:8080/guessword-1/rest/";
 
     @GET("phrases")
     Observable<Response<List<Phrase>>> fetchAllPhrases(@Query("user_id") long userId);
