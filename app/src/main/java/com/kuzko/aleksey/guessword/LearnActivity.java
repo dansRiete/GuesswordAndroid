@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.kuzko.aleksey.guessword.datamodel.GuesswordRepository;
 import com.kuzko.aleksey.guessword.datamodel.Phrase;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public class LearnActivity extends AppCompatActivity {
     private List<Phrase> phrases;
     private List<Phrase> askedPhrases = new ArrayList<>();
     private GuesswordService guesswordService;
-    private Button nextButton;
+    private Button answerButton;
     private int counter = 0;
     private RecyclerAdapter recyclerAdapter;
     private RecyclerView mRecyclerView;
@@ -37,8 +36,8 @@ public class LearnActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         userLoginId = retrieveUserLogin(savedInstanceState);
         guesswordService = GuesswordRepository.getInstance().getGuesswordService();
-        nextButton = (Button) findViewById(R.id.nextButton);
-        nextButton.setClickable(false);
+        answerButton = (Button) findViewById(R.id.answerButton);
+        answerButton.setClickable(false);
 
         guesswordService.fetchAllPhrases(userLoginId)
                         .subscribeOn(Schedulers.io())
@@ -48,11 +47,11 @@ public class LearnActivity extends AppCompatActivity {
                                     Log.d("INFO", response.raw().request().url().toString());
                                     phrases = response.body();
                                     if(phrases != null){
-                                        nextButton.setClickable(true);
+                                        answerButton.setClickable(true);
                                     }
                                 },
                                 throwable ->{
-                                    nextButton.setClickable(false);
+                                    answerButton.setClickable(false);
                                     Toast.makeText(LearnActivity.this, "LearnActivity " + throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                                 }
                         );
@@ -78,7 +77,7 @@ public class LearnActivity extends AppCompatActivity {
         }
     }
 
-    public void nextButtonClicked(View view) {
+    public void answerButtonClicked(View view) {
 
         if(counter < phrases.size()){
             Phrase askedPhrase = phrases.get(counter++);
@@ -86,5 +85,21 @@ public class LearnActivity extends AppCompatActivity {
             recyclerAdapter.notifyDataSetChanged();
             Log.d("INFO", "Phrase asked: " + askedPhrase.toString());
         }
+    }
+
+    public void wrongButtonClicked(View view) {
+
+    }
+
+    public void rightButtonClicked(View view) {
+
+    }
+
+    public void previousWrongButtonClicked(View view) {
+
+    }
+
+    public void previousRightButtonClicked(View view) {
+
     }
 }

@@ -20,26 +20,58 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/cityEnterView"
-        android:layout_above="@+id/nextButton">
+        android:layout_above="@+id/buttonGroup">
 
         <EditText
-            android:hint="Enter answer"
+            android:hint="@string/string_hint_answerField"
             android:id="@+id/editTextCity"
             android:layout_width="0dp"
             android:layout_weight="0.60"
             android:layout_height="wrap_content"
             android:inputType="text"
             />
+        <Button
+        android:id="@+id/answerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="answerButtonClicked"
+        android:text="Answer"/>
 
     </LinearLayout>
 
 
-    <Button
-        android:id="@+id/nextButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:onClick="nextButtonClicked"
-        android:text="Next"/>
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:id="@+id/buttonGroup"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:id="@+id/nextButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="previousWrongButtonClicked"
+            android:text="Prev -"/>
+        <Button
+            android:id="@+id/nextButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="previousRightButtonClicked"
+            android:text="Prev +"/>
+        <Button
+            android:id="@+id/nextButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="wrongButtonClicked"
+            android:text="-"/>
+        <Button
+            android:id="@+id/nextButton4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="rightButtonClicked"
+            android:text="+"/>
+    </LinearLayout>
+
 
 </RelativeLayout>

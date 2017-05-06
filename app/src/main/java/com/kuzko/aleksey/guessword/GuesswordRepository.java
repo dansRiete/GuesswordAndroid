@@ -1,6 +1,4 @@
-package com.kuzko.aleksey.guessword.datamodel;
-
-import com.kuzko.aleksey.guessword.GuesswordService;
+package com.kuzko.aleksey.guessword;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
