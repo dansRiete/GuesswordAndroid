@@ -48,25 +48,25 @@
         android:id="@+id/buttonGroup"
         android:layout_alignParentBottom="true">
         <Button
-            android:id="@+id/nextButton1"
+            android:id="@+id/buttonPreviousWrong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="previousWrongButtonClicked"
             android:text="Prev -"/>
         <Button
-            android:id="@+id/nextButton2"
+            android:id="@+id/buttonPreviousRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="previousRightButtonClicked"
             android:text="Prev +"/>
         <Button
-            android:id="@+id/nextButton3"
+            android:id="@+id/buttonIDoNotKnow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="wrongButtonClicked"
             android:text="-"/>
         <Button
-            android:id="@+id/nextButton4"
+            android:id="@+id/buttonIKnow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="rightButtonClicked"
