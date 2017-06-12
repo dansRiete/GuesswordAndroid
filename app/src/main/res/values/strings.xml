@@ -12,4 +12,5 @@
     <string name="menu_add">Add</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+    <string name="drawer_menu_item_edit_collection">Edit collection</string>
 </resources>

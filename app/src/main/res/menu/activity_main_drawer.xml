@@ -2,20 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_contacts"
-        android:icon="@drawable/ic_add"
-        android:title="One" />
-    <item
-        android:id="@+id/nav_weather"
-        android:icon="@drawable/ic_add"
-        android:title="Two" />
-    <item
-        android:id="@+id/nav_map"
-        android:icon="@drawable/ic_add"
-        android:title="Three" />
-    <item
-        android:id="@+id/nav_logout"
-        android:icon="@drawable/ic_add"
-        android:title="Four" />
+        android:id="@+id/edit_item_menu"
+        android:icon="@drawable/ic_playlist_add_black_48dp"
+        android:title="@string/drawer_menu_item_edit_collection" />
 
 </menu>

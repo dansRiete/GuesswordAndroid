@@ -1,5 +1,6 @@
 package com.kuzko.aleksey.guessword;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -11,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -46,6 +46,8 @@ public class LearnActivity extends AppCompatActivity implements NavigationView.O
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerAdapter);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
@@ -61,7 +63,6 @@ public class LearnActivity extends AppCompatActivity implements NavigationView.O
                 super.onDrawerOpened(drawerView);
             }
         };
-        mDrawerToggle.syncState();
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -85,33 +86,13 @@ public class LearnActivity extends AppCompatActivity implements NavigationView.O
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
-            case R.id.nav_logout:
-//                application.logOut();
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-//                startActivity(new Intent(this, LoginActivity.class));
-                break;
-            case R.id.nav_weather:
-//                fragmentManager.beginTransaction().replace(R.id.fragment_frame, weatherFragment).commit();
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                break;
-            case R.id.nav_map:
-//                fragmentManager.beginTransaction().replace(R.id.fragment_frame, mapFragment).commit();
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                break;
-            case R.id.nav_contacts:
-//                fragmentManager.beginTransaction().replace(R.id.fragment_frame, contactsViewFragment).commit();
+            case R.id.edit_item_menu:
+                startActivity(new Intent(this, ListActivity.class));
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
             default:
                 break;
         }
-        return true;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.menu);
         return true;
     }
 
