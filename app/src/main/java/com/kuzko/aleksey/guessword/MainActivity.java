@@ -1,54 +1,42 @@
 package com.kuzko.aleksey.guessword;
 
-import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.kuzko.aleksey.guessword.datamodel.Phrase;
-import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class LearnActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private List<Phrase> askedPhrasesLog = new ArrayList<>();
-    private Button answerButton;
-    private int counter = 0;
-    private RecyclerAdapter recyclerAdapter;
-    private RecyclerView mRecyclerView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    private FragmentManager fragmentManager;
+    private LearnFragment learnFragment;
+    private EditFragment editFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_learn);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        answerButton = (Button) findViewById(R.id.answerButton);
-        recyclerAdapter = new RecyclerAdapter(askedPhrasesLog);
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(true);    // If confident of rec.view layout size isn't changed by content
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(recyclerAdapter);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        learnFragment = new LearnFragment();
+        editFragment = new EditFragment();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.fragment_frame, learnFragment).commit();
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
@@ -64,14 +52,21 @@ public class LearnActivity extends AppCompatActivity implements NavigationView.O
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+//        mDrawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.colorAccent));
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -87,8 +82,8 @@ public class LearnActivity extends AppCompatActivity implements NavigationView.O
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
             case R.id.edit_item_menu:
-                startActivity(new Intent(this, ListActivity.class));
                 mDrawerLayout.closeDrawer(GravityCompat.START);
+                fragmentManager.beginTransaction().replace(R.id.fragment_frame, editFragment).commit();
                 break;
             default:
                 break;
@@ -96,18 +91,7 @@ public class LearnActivity extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
-    public void answerButtonClicked(View view) {
-        Phrase askedPhrase = null;
-        try {
-            askedPhrase = GuesswordRepository.getInstance().retrieveRandomPhrase();
-        } catch (EmptyCollectionException e) {
-            Toast.makeText(this, "Phrases collection is empty", Toast.LENGTH_LONG).show();
-            return;
-        }
-        askedPhrasesLog.add(askedPhrase);
-        recyclerAdapter.notifyDataSetChanged();
-        Log.d("INFO", "Phrase asked: " + askedPhrase.toString());
-    }
+
 
     public void wrongButtonClicked(View view) {
 

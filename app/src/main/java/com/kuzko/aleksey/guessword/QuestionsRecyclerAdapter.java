@@ -11,17 +11,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.kuzko.aleksey.guessword.datamodel.Phrase;
+import com.kuzko.aleksey.guessword.datamodel.Question;
 
 import java.util.List;
 
 
-class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAdapter.ViewHolder> {
 
-    private List<Phrase> phrases;
+    private List<Question> questions;
 
-    RecyclerAdapter(List<Phrase> dataset) {
-        phrases = dataset;
+    QuestionsRecyclerAdapter(List<Question> dataset) {
+        questions = dataset;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -34,23 +34,23 @@ class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
         }
     }
 
-    public Phrase retrieveArticle(int position){
-        return phrases.get(position);
+    public Question retrieveArticle(int position){
+        return questions.get(position);
     }
 
     @Override
-    public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public QuestionsRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.textViewRecyclerItem.setText(phrases.get(position).toString());
+        holder.textViewRecyclerItem.setText(questions.get(position).toString());
     }
 
     @Override
     public int getItemCount() {
-        return phrases.size();
+        return questions.size();
     }
 }

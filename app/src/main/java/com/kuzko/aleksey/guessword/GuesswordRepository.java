@@ -43,6 +43,10 @@ public class GuesswordRepository {
         return instance;
     }
 
+    public Question askQuestion() throws EmptyCollectionException{
+        return Question.compose(retrieveRandomPhrase());
+    }
+
     public Phrase retrieveRandomPhrase() throws EmptyCollectionException{
         if(phrases.isEmpty()){
             throw new EmptyCollectionException();

@@ -68,6 +68,11 @@ public class Phrase implements Serializable {
         this.foreignWord = foreignWord;
     }
 
+    public Phrase(String foreignWord, String nativeWord) {
+        this.foreignWord = foreignWord;
+        this.nativeWord = nativeWord;
+    }
+
     public Phrase(long id, String foreignWord, String nativeWord, String transcription, double probabilityFactor,
                   Timestamp collectionAddingDateTime, String label, Timestamp lastAccessDateTime, double multiplier/*, User user*/){
         this.id = id;
