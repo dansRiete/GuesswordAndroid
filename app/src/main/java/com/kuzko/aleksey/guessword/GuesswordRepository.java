@@ -1,6 +1,8 @@
 package com.kuzko.aleksey.guessword;
 
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.kuzko.aleksey.guessword.database.HelperFactory;
+import com.kuzko.aleksey.guessword.database.dao.PhraseDao;
 import com.kuzko.aleksey.guessword.datamodel.Phrase;
 import com.kuzko.aleksey.guessword.datamodel.Question;
 import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
@@ -18,7 +20,7 @@ public class GuesswordRepository {
 
     private static GuesswordRepository instance;
     private List<Phrase> phrases;
-    private Random random;
+    private Random random = new Random();
     private int maxPhraseIndex;
     private int activePhrasesNumber;
     private int activeUntrainedPhrasesNumber;
@@ -43,6 +45,28 @@ public class GuesswordRepository {
         return instance;
     }
 
+    public long giveNewPhraseId(){
+
+        long id;
+
+        try {
+            PhraseDao phraseDao = HelperFactory.getHelper().getPhraseDao();
+            QueryBuilder<Phrase, Long> queryBuilder = phraseDao.queryBuilder();
+            queryBuilder.selectRaw("MAX(id)");
+            String result = phraseDao.queryRaw(queryBuilder.prepareStatementString()).getFirstResult()[0];
+            if(result != null)
+                id = Long.valueOf(result) + 1;
+            else
+                id = 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+
+        return id;
+    }
+
     public Question askQuestion() throws EmptyCollectionException{
         return Question.compose(retrieveRandomPhrase());
     }
@@ -54,17 +78,31 @@ public class GuesswordRepository {
         return retrievePhraseByIndex(random.nextInt(maxPhraseIndex));
     }
 
+    public void addPhrase(Phrase addedPhrase){
+        if(addedPhrase == null){
+            throw new IllegalArgumentException("Phrase can not be null");
+        }
+        phrases.add(addedPhrase);
+        try {
+            HelperFactory.getHelper().getPhraseDao().create(addedPhrase);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Something went wrong during creating Phrase in DB");
+        }
+        reloadIndices();
+    }
+
     private Phrase retrievePhraseByIndex(int index) {
 
         for (Phrase phrase : phrases) {
-            if (phrase.isInList(selectedLabels) && index >= phrase.indexStart && index <= phrase.indexEnd) {
+            if (phrase.isInList(selectedLabels) && index >= phrase.getIndexStart() && index <= phrase.getIndexEnd()) {
                 return phrase;
             }
         }
         return null;
     }
 
-    public void reloadIndices() {
+    private void reloadIndices() {
         System.out.println("reloadIndices() from PhraseRepository");
 
         if(phrases.isEmpty()){
@@ -83,12 +121,13 @@ public class GuesswordRepository {
         this.activeUntrainedPhrasesNumber = 0;
 
         for (Phrase phr : phrases) {
-            phr.indexStart = phr.indexEnd = 0;
+            phr.setIndexStart(0);
+            phr.setIndexEnd(0);
             if(phr.isInList(selectedLabels)){
                 this.activePhrasesNumber++;
-                if(phr.probabilityFactor > 3){
+                if(phr.getProbabilityFactor() > 3){
                     this.activeUntrainedPhrasesNumber++;
-                    untrainedPhrasesProbabilityFactorsSumm += phr.probabilityFactor;
+                    untrainedPhrasesProbabilityFactorsSumm += phr.getProbabilityFactor();
                 }
             }
         }
@@ -103,42 +142,42 @@ public class GuesswordRepository {
                 int indexStart;
                 int indexEnd;
                 double prob;
-                prob = currentPhrase.probabilityFactor;
+                prob = currentPhrase.getProbabilityFactor();
 
                 //If activeUntrainedPhrasesNumber == 0 then all words have been learnt, setting equal for all indices
                 if (activeUntrainedPhrasesNumber == 0) {
 
                     indexStart = (int) (temp * RANGE);
-                    currentPhrase.indexStart = indexStart;
+                    currentPhrase.setIndexStart(indexStart);
                     temp += CHANCE_OF_APPEARING_TRAINED_PHRASES / activeTrainedPhrasesNumber;
                     indexEnd = (int) ((temp * RANGE) - 1);
-                    currentPhrase.indexEnd = indexEnd;
+                    currentPhrase.setIndexEnd(indexEnd);
 
                 } else { //Otherwise, set indices by algorithm
 
                     if (prob > 3) {
 
                         indexStart = (int) (temp * RANGE);
-                        currentPhrase.indexStart = indexStart;
+                        currentPhrase.setIndexStart(indexStart);
                         temp += scaleOfOneProb * prob;
                         indexEnd = (int) ((temp * RANGE) - 1);
-                        currentPhrase.indexEnd = indexEnd;
+                        currentPhrase.setIndexEnd(indexEnd);
 //                        System.out.println("Index Start = " + indexStart + ", Index End = " + indexEnd);
 
                     } else {
 
                         indexStart = (int) (temp * RANGE);
-                        currentPhrase.indexStart = indexStart;
+                        currentPhrase.setIndexStart(indexStart);
                         temp += indexOfTrained;
                         indexEnd = (int) ((temp * RANGE) - 1);
-                        currentPhrase.indexEnd = indexEnd;
+                        currentPhrase.setIndexEnd(indexEnd);
 //                        System.out.println("Index Start = " + indexStart + ", Index End = " + indexEnd);
                     }
                 }
 
                 modificatePhrasesIndicesNumber++;
                 if(modificatePhrasesIndicesNumber == activePhrasesNumber){
-                    this.maxPhraseIndex = currentPhrase.indexEnd;
+                    this.maxPhraseIndex = currentPhrase.getIndexEnd();
                 }
             }
         }

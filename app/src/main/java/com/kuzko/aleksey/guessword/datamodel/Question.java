@@ -7,6 +7,7 @@ import com.kuzko.aleksey.guessword.utils.Hints;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -46,13 +47,13 @@ public class Question implements Serializable {
 
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(name = "answer")
     private String answerLiteral;
 
     @Column(name = "date")
-    private Timestamp askDate;
+    private Date askDate;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "phrase_key")
@@ -90,7 +91,7 @@ public class Question implements Serializable {
     private long afterAnswerEndIndex;
 
     @Transient
-    private Timestamp initLastAccessDate;
+    private Date initLastAccessDate;
 
     @Transient
     private boolean answered;
@@ -107,7 +108,8 @@ public class Question implements Serializable {
         this.initStartIndex = askedPhrase.getIndexStart();
         this.initEndIndex = askedPhrase.getIndexEnd();
         this.initLastAccessDate = askedPhrase.getLastAccessDateTime();
-        this.askDate = askedPhrase.lastAccessDateTime = new Timestamp(System.currentTimeMillis());
+        //TODO WTF?!
+        this.askDate /*= askedPhrase.lastAccessDateTime*/ = new Timestamp(System.currentTimeMillis());
 //        this.user = askedPhrase.getUser();
     }
 
@@ -213,7 +215,7 @@ public class Question implements Serializable {
     }
 
     private boolean lastInLog() {
-        return askedPhrase.lastAccessDateTime == askDate;
+        return askedPhrase.getLastAccessDateTime() == askDate;
     }
 
     private boolean isTrained() {
@@ -221,7 +223,7 @@ public class Question implements Serializable {
     }
 
     public String string(){
-        return askedPhrase.nativeWord + " " + Hints.shortHint(askedPhrase.foreignWord);
+        return askedPhrase.getNativeWord() + " " + Hints.shortHint(askedPhrase.getForeignWord());
     }
 
     public String probabilityFactorHistory() {
@@ -298,7 +300,7 @@ public class Question implements Serializable {
 
     //Getters and setters
 
-    public Timestamp getAskDate() {
+    public Date getAskDate() {
         return askDate;
     }
 
@@ -324,5 +326,10 @@ public class Question implements Serializable {
 
     public void setAnswered(boolean answered) {
         this.answered = answered;
+    }
+
+    @Override
+    public String toString() {
+        return askedPhrase.getNativeWord() + (answered ? " - " + askedPhrase.getForeignWord() : "");
     }
 }

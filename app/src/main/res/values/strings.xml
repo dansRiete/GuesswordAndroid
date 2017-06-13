@@ -18,4 +18,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="edit_text_hint_foreignWord">Foreign word</string>
     <string name="edit_text_hint_nativeWord">Native word</string>
+    <string name="drawer_item_menu_learn">Learn</string>
+    <string name="edit_text_hint_transription">Transcription</string>
+    <string name="edit_text_hint_label">Label</string>
 </resources>

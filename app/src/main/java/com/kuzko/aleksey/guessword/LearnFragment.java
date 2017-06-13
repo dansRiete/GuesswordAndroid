@@ -35,6 +35,12 @@ public class LearnFragment extends Fragment implements View.OnClickListener{
     }
 
     @Override
+    public void onStart(){
+        super.onStart();
+
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         answerButton = (Button) getActivity().findViewById(R.id.answerButton);

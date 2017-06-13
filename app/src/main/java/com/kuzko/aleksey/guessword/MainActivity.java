@@ -81,36 +81,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
-            case R.id.edit_item_menu:
+            case R.id.drawer_item_menu_edit:
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 fragmentManager.beginTransaction().replace(R.id.fragment_frame, editFragment).commit();
+                break;
+            case R.id.drawer_item_menu_learn:
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                fragmentManager.beginTransaction().replace(R.id.fragment_frame, learnFragment).commit();
                 break;
             default:
                 break;
         }
         return true;
-    }
-
-
-
-    public void wrongButtonClicked(View view) {
-
-    }
-
-    public void rightButtonClicked(View view) {
-
-    }
-
-    public void previousWrongButtonClicked(View view) {
-
-    }
-
-    public void previousRightButtonClicked(View view) {
-
-    }
-
-    public void add(MenuItem item) {
-
-
     }
 }
