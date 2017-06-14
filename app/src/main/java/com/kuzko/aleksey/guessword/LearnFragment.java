@@ -16,33 +16,32 @@ import com.kuzko.aleksey.guessword.datamodel.Question;
 import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class LearnFragment extends Fragment implements View.OnClickListener{
 
-    private List<Question> askedPhrasesLog = new ArrayList<>();
+    private ArrayList<Question> askedPhrasesLog = new ArrayList<>();
     private Button answerButton, buttonPreviousWrong, buttonPreviousRight, buttonIDoNotKnow, buttonIKnow;
     private QuestionsRecyclerAdapter questionsRecyclerAdapter;
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i(getTag(), "onSaveInstanceState(Bundle outState)");
+        outState.putSerializable("ASKED_PHRASES_LOG", askedPhrasesLog);
+    }
+
     public LearnFragment() {
-        // Required empty public constructor
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-
+    public void onStop() {
+        super.onStop();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.i(getTag(), "askedPhrasesLog.size="+askedPhrasesLog.size());
         answerButton = (Button) getActivity().findViewById(R.id.answerButton);
         buttonPreviousWrong = (Button) getActivity().findViewById(R.id.buttonPreviousWrong);
         buttonPreviousRight = (Button) getActivity().findViewById(R.id.buttonPreviousRight);
@@ -53,6 +52,9 @@ public class LearnFragment extends Fragment implements View.OnClickListener{
         buttonIKnow.setOnClickListener(this);
         buttonPreviousRight.setOnClickListener(this);
         buttonIDoNotKnow.setOnClickListener(this);
+        if(savedInstanceState != null){
+            askedPhrasesLog = (ArrayList) savedInstanceState.getSerializable("ASKED_PHRASES_LOG");
+        }
         questionsRecyclerAdapter = new QuestionsRecyclerAdapter(askedPhrasesLog, getContext());
         RecyclerView mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);    // If confident of rec.view layout size isn't changed by content
@@ -72,7 +74,7 @@ public class LearnFragment extends Fragment implements View.OnClickListener{
     private void ask(){
         try {
             Question askedQuestion = GuesswordRepository.getInstance().askQuestion();
-            askedPhrasesLog.add(askedQuestion);
+            askedPhrasesLog.add(0, askedQuestion);
             questionsRecyclerAdapter.notifyDataSetChanged();
             Log.d("INFO", "Phrase asked: " + askedQuestion.toString());
         } catch (EmptyCollectionException e) {
@@ -82,8 +84,7 @@ public class LearnFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        Question question = questionsRecyclerAdapter
-                .retrieveArticle(questionsRecyclerAdapter.lastPositinon());
+        Question question = questionsRecyclerAdapter.retrieveArticle(0);
         switch (v.getId()){
             case R.id.answerButton:
                 ask();

@@ -123,4 +123,10 @@ public class EditFragment extends Fragment {
         super.onStop();
         Log.i(LOG_TAG, "onStop()");
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i(getTag(), "onSaveInstanceState(Bundle outState)");
+    }
 }

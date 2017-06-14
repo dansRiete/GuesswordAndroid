@@ -30,6 +30,11 @@ class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAda
         this.context = context;
     }
 
+    public void add(Question question){
+        questions.add(question);
+        notifyDataSetChanged();
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewRecViewQuestion, textViewRecViewTime, textViewRecViewRight, textViewRecViewWrong;
         ImageView imageView;
@@ -45,15 +50,16 @@ class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAda
 
     public Question retrieveArticle(int position){
         Question question = null;
-        try{
+        if(questions.isEmpty()){
+            return null;
+        }
+        try {
             question = questions.get(position);
-        }catch (ArrayIndexOutOfBoundsException e){
+        }catch (IndexOutOfBoundsException e){
             e.printStackTrace();
         }
         return question;
     }
-
-
 
     public int lastPositinon(){
         return questions.size() - 1;
@@ -68,9 +74,6 @@ class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAda
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Question currentQuestion = questions.get(position);
-        System.out.println("onBindViewHolder!!!!!!!!!!!!!!!!!!!!!!!, pos=" + position +
-                ", currQuest:"+currentQuestion + ", answ=" + currentQuestion.isAnswered()
-        );
         int colorGreen = ContextCompat.getColor(context, R.color.colorGreen);
         int colorRed = ContextCompat.getColor(context, R.color.colorRed);
         int colorGray = ContextCompat.getColor(context, R.color.colorGray);

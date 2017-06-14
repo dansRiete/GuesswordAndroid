@@ -21,6 +21,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager fragmentManager;
     private LearnFragment learnFragment;
     private EditFragment editFragment;
+    private final static String LEARN_FRAGMENT_TAG = "LEARN_FRAGMENT";
+    private final static String EDIT_FRAGMENT_TAG = "EDIT_FRAGMENT";
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +44,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragment_frame, learnFragment).commit();
-
+        if(savedInstanceState == null) {
+            learnFragment = new LearnFragment();
+            editFragment = new EditFragment();
+            fragmentManager.beginTransaction().replace(R.id.fragment_frame, learnFragment, LEARN_FRAGMENT_TAG).commit();
+        }/*else {
+            learnFragment = (LearnFragment) getSupportFragmentManager().findFragmentByTag(LEARN_FRAGMENT_TAG);
+            editFragment = (EditFragment) getSupportFragmentManager().findFragmentByTag(EDIT_FRAGMENT_TAG);
+        }*/
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
             @Override
@@ -83,11 +97,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch(item.getItemId()){
             case R.id.drawer_item_menu_edit:
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-                fragmentManager.beginTransaction().replace(R.id.fragment_frame, editFragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.fragment_frame, editFragment, EDIT_FRAGMENT_TAG).commit();
                 break;
             case R.id.drawer_item_menu_learn:
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-                fragmentManager.beginTransaction().replace(R.id.fragment_frame, learnFragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.fragment_frame, learnFragment, LEARN_FRAGMENT_TAG).commit();
                 break;
             default:
                 break;
