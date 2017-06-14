@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_marginTop="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textViewRecViewTime"
+            tools:text="19:54:08"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/textViewRecViewRight"
+            tools:text="right"
+            android:text="@string/textView_recView_right"
+            tools:textColor="@color/colorRed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="12sp"/>
+        <TextView
+            android:id="@+id/textViewRecViewSlash"
+            tools:text="/"
+            android:text="@string/textView_recView_slash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="12sp"/>
+        <TextView
+            android:id="@+id/textViewRecViewWrong"
+            tools:text="wrong"
+            android:text="@string/textView_recView_wrong"
+            tools:textColor="@color/colorGreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/textViewRecViewQuestion"
+        tools:text="Hello World - Привет мир [хэлоу ворлд]"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginLeft="7dp"
+        android:textSize="14sp" />
+
+</LinearLayout>

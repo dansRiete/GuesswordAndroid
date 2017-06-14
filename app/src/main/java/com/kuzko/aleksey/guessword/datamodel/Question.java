@@ -135,9 +135,9 @@ public class Question implements Serializable {
     }
 
     public void rightAnswer() {
-        System.out.println("CALL: rightAnswer() from Question");
+        System.out.println("CALL: rightAnswer() from Question - " + this + ", isAnswered()=" + isAnswered());
 
-        if (!lastInLog()) {
+        if (getAskedPhrase().getLastAccessDateTime() != null && !lastInLog()) {
             return;
         }
 
@@ -169,13 +169,14 @@ public class Question implements Serializable {
         }*/
         saveQuestion();
         this.answered = true;
+        System.out.println("CALL: rightAnswer() from Question - " + this + ", isAnswered()=" + isAnswered());
 
     }
 
     public void wrongAnswer() {
         System.out.println("CALL: wrongAnswer() from Question");
 
-        if (!lastInLog()) {
+        if (getAskedPhrase().getLastAccessDateTime() != null && !lastInLog()) {
             return;
         }
 

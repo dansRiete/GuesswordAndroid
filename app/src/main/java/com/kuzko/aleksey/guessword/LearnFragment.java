@@ -53,7 +53,7 @@ public class LearnFragment extends Fragment implements View.OnClickListener{
         buttonIKnow.setOnClickListener(this);
         buttonPreviousRight.setOnClickListener(this);
         buttonIDoNotKnow.setOnClickListener(this);
-        questionsRecyclerAdapter = new QuestionsRecyclerAdapter(askedPhrasesLog);
+        questionsRecyclerAdapter = new QuestionsRecyclerAdapter(askedPhrasesLog, getContext());
         RecyclerView mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);    // If confident of rec.view layout size isn't changed by content
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -69,18 +69,35 @@ public class LearnFragment extends Fragment implements View.OnClickListener{
         return v;
     }
 
+    private void ask(){
+        try {
+            Question askedQuestion = GuesswordRepository.getInstance().askQuestion();
+            askedPhrasesLog.add(askedQuestion);
+            questionsRecyclerAdapter.notifyDataSetChanged();
+            Log.d("INFO", "Phrase asked: " + askedQuestion.toString());
+        } catch (EmptyCollectionException e) {
+            Toast.makeText(getContext(), "Phrases collection is empty", Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     public void onClick(View v) {
+        Question question = questionsRecyclerAdapter
+                .retrieveArticle(questionsRecyclerAdapter.lastPositinon());
         switch (v.getId()){
             case R.id.answerButton:
-                try {
-                    Question askedQuestion = GuesswordRepository.getInstance().askQuestion();
-                    askedPhrasesLog.add(askedQuestion);
-                    questionsRecyclerAdapter.notifyDataSetChanged();
-                    Log.d("INFO", "Phrase asked: " + askedQuestion.toString());
-                } catch (EmptyCollectionException e) {
-                    Toast.makeText(getContext(), "Phrases collection is empty", Toast.LENGTH_LONG).show();
-                    return;
+                ask();
+                break;
+            case R.id.buttonIKnow:
+                if(question != null){
+                    question.rightAnswer();
+                    ask();
+                }
+                break;
+            case R.id.buttonIDoNotKnow:
+                if(question != null){
+                    question.wrongAnswer();
+                    ask();
                 }
                 break;
             default:

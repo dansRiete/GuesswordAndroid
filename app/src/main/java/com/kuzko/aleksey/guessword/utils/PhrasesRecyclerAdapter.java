@@ -30,7 +30,7 @@ public class PhrasesRecyclerAdapter extends RecyclerView.Adapter<PhrasesRecycler
         ImageView imageView;
         ViewHolder(View view) {
             super(view);
-            textViewRecyclerItem = (TextView) view.findViewById(R.id.textViewRecyclerItem);
+            textViewRecyclerItem = (TextView) view.findViewById(R.id.textViewRecViewQuestion);
             imageView = (ImageView) view.findViewById(R.id.image);
         }
     }
@@ -41,7 +41,7 @@ public class PhrasesRecyclerAdapter extends RecyclerView.Adapter<PhrasesRecycler
 
     @Override
     public PhrasesRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_question_item, parent, false);
         return new PhrasesRecyclerAdapter.ViewHolder(view);
     }
 

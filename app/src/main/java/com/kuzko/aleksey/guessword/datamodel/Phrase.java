@@ -1,5 +1,7 @@
 package com.kuzko.aleksey.guessword.datamodel;
 
+import com.j256.ormlite.field.DatabaseField;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -7,8 +9,6 @@ import java.util.HashSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -27,8 +27,7 @@ public class Phrase implements Serializable {
     @Transient
     public static final double DEFAULT_MULTIPLIER = 1;
 
-    @javax.persistence.Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @DatabaseField(generatedId = true)
     private long id;
 
     @Column(name = "for_word")
@@ -71,8 +70,8 @@ public class Phrase implements Serializable {
     public Phrase() {
     }
 
-    public Phrase(long id, String foreignWord, String nativeWord, String transcription, String label /*, User user*/){
-        this.id = id;
+    public Phrase(/*long id, */String foreignWord, String nativeWord, String transcription, String label /*, User user*/){
+//        this.id = id;
 //        this.user = user;
         this.foreignWord = foreignWord;
         this.nativeWord = nativeWord;

@@ -21,4 +21,7 @@
     <string name="drawer_item_menu_learn">Learn</string>
     <string name="edit_text_hint_transription">Transcription</string>
     <string name="edit_text_hint_label">Label</string>
+    <string name="textView_recView_right">right</string>
+    <string name="textView_recView_slash">/</string>
+    <string name="textView_recView_wrong">wrong</string>
 </resources>

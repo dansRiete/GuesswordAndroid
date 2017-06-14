@@ -24,7 +24,7 @@ import java.util.List;
 
 public class EditFragment extends Fragment {
 
-    private View view;
+    private View dialogView;
     private AlertDialog.Builder alertDialog;
     private PhrasesRecyclerAdapter phrasesRecyclerAdapter;
     private List<Phrase> phrases = new ArrayList<>();
@@ -71,19 +71,21 @@ public class EditFragment extends Fragment {
 
     private void initDialog() {
         alertDialog = new AlertDialog.Builder(getActivity());
-        view = getActivity().getLayoutInflater().inflate(R.layout.phrases_add_dialog_layout, null);
-        alertDialog.setView(view);
+        dialogView = getActivity().getLayoutInflater().inflate(R.layout.phrases_add_dialog_layout, null);
+        alertDialog.setView(dialogView);
         alertDialog.setPositiveButton("Save", (dialog, which) -> {
 
-            EditText editTextDialogForeingWord = (EditText)view.findViewById(R.id.editTextDialogForeingWord);
-            EditText editTextDialogNativeWord = (EditText)view.findViewById(R.id.editTextDialogNativeWord);
-            EditText editTextDialogTranscription = (EditText)view.findViewById(R.id.editTextDialogTranscription);
-            EditText editTextDialogLabel = (EditText)view.findViewById(R.id.editTextDialogLabel);
+            EditText editTextDialogForeingWord = (EditText) dialogView.findViewById(R.id.editTextDialogForeingWord);
+            EditText editTextDialogNativeWord = (EditText) dialogView.findViewById(R.id.editTextDialogNativeWord);
+            EditText editTextDialogTranscription = (EditText) dialogView.findViewById(R.id.editTextDialogTranscription);
+            EditText editTextDialogLabel = (EditText) dialogView.findViewById(R.id.editTextDialogLabel);
+
             String givenNativeWord = editTextDialogNativeWord.getText().toString();
             String givenForeignWord = editTextDialogForeingWord.getText().toString();
             String givenTranscription = editTextDialogTranscription.getText().toString();
             String givenLabel = editTextDialogLabel.getText().toString();
-            Phrase addedPhrase = new Phrase(GuesswordRepository.getInstance().giveNewPhraseId(), givenForeignWord, givenNativeWord, givenTranscription, givenLabel);
+
+            Phrase addedPhrase = new Phrase(/*GuesswordRepository.getInstance().giveNewPhraseId(), */givenForeignWord, givenNativeWord, givenTranscription, givenLabel);
             phrasesRecyclerAdapter.add(addedPhrase);
             GuesswordRepository.getInstance().addPhrase(addedPhrase);
             dialog.dismiss();
@@ -92,8 +94,8 @@ public class EditFragment extends Fragment {
     }
 
     private void removeView() {
-        if(view.getParent() != null) {
-            ((ViewGroup) view.getParent()).removeView(view);
+        if(dialogView.getParent() != null) {
+            ((ViewGroup) dialogView.getParent()).removeView(dialogView);
         }
     }
 
