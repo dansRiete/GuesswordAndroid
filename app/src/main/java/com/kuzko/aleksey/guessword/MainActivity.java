@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
     }
 
     @Override
@@ -49,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             editFragment = new EditFragment();
             fragmentManager.beginTransaction().replace(R.id.fragment_frame, learnFragment, LEARN_FRAGMENT_TAG).commit();
         }/*else {
-            learnFragment = (LearnFragment) getSupportFragmentManager().findFragmentByTag(LEARN_FRAGMENT_TAG);
-            editFragment = (EditFragment) getSupportFragmentManager().findFragmentByTag(EDIT_FRAGMENT_TAG);
+            learnFragment = (LearnFragment) savedInstanceState.getSerializable("learnFrag");
+            editFragment = (EditFragment) savedInstanceState.getSerializable("editFrag");
         }*/
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
