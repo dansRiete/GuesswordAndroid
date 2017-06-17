@@ -16,13 +16,14 @@ import android.widget.TextView;
 import com.kuzko.aleksey.guessword.datamodel.Question;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 
 class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAdapter.ViewHolder> {
 
-    private List<Question> questions;
+    private List<Question> questions = new ArrayList<>();
     private Context context;
 
     QuestionsRecyclerAdapter(List<Question> dataset, Context context) {

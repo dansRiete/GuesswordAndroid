@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".LearnActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,12 +24,13 @@
 
         <!--
         <activity
-            android:name=".MainActivity"
+            android:name=".LearnActivity"
             android:label="@string/title_activity_learn"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         -->
-        <activity android:name=".ListActivity"></activity>
+        <activity android:name=".ListActivity" />
+        <activity android:name=".EditActivity"></activity>
     </application>
 
 </manifest>
