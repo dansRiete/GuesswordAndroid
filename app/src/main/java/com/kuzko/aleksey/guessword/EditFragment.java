@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class EditFragment extends Fragment {
+public class EditFragment extends Fragment{
 
     private View dialogView;
     private AlertDialog.Builder alertDialog;
