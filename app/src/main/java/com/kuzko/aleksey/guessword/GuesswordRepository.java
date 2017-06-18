@@ -1,8 +1,8 @@
 package com.kuzko.aleksey.guessword;
 
-import com.j256.ormlite.stmt.QueryBuilder;
 import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.database.dao.PhraseDao;
+import com.kuzko.aleksey.guessword.database.dao.QuestionDao;
 import com.kuzko.aleksey.guessword.datamodel.Phrase;
 import com.kuzko.aleksey.guessword.datamodel.Question;
 import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
@@ -19,8 +19,12 @@ import java.util.Random;
 public class GuesswordRepository {
 
     private static GuesswordRepository instance;
-    private List<Phrase> phrases;
+    private List<Phrase> allPhrases;
+
+    private List<Question> todaysQuestions;
     private Random random = new Random();
+    private PhraseDao phraseDao;
+    private QuestionDao questionDao;
     private int maxPhraseIndex;
     private int activePhrasesNumber;
     private int activeUntrainedPhrasesNumber;
@@ -29,12 +33,20 @@ public class GuesswordRepository {
     private HashSet<String> selectedLabels;
 
     private GuesswordRepository(){
+
         try {
-            phrases = HelperFactory.getHelper().getPhraseDao().retrieveAll();
+            phraseDao = HelperFactory.getHelper().getPhraseDao();
+            questionDao = HelperFactory.getHelper().getQuestionDao();
+            allPhrases = phraseDao.retrieveAll();
+            todaysQuestions = questionDao.retrieveAll();
+            System.out.println("todaysQuestions");
+            for(Question q : todaysQuestions){
+                System.out.println(q.getAskedPhrase());
+            }
             reloadIndices();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Error during retrieving phrases collection from DB");
+            throw new RuntimeException("Error during retrieving allPhrases collection from DB");
         }
     }
 
@@ -45,44 +57,29 @@ public class GuesswordRepository {
         return instance;
     }
 
-    public long giveNewPhraseId(){
-
-        long id;
-
-        try {
-            PhraseDao phraseDao = HelperFactory.getHelper().getPhraseDao();
-            QueryBuilder<Phrase, Long> queryBuilder = phraseDao.queryBuilder();
-            queryBuilder.selectRaw("MAX(id)");
-            String result = phraseDao.queryRaw(queryBuilder.prepareStatementString()).getFirstResult()[0];
-            if(result != null)
-                id = Long.valueOf(result) + 1;
-            else
-                id = 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-
-        return id;
+    public Question askQuestion() throws EmptyCollectionException, SQLException{
+        Question askedQuestion = Question.compose(retrieveRandomPhrase());
+        todaysQuestions.add(0, askedQuestion);
+        HelperFactory.getHelper().getQuestionDao().create(askedQuestion);
+        return askedQuestion;
     }
 
-    public Question askQuestion() throws EmptyCollectionException{
-        return Question.compose(retrieveRandomPhrase());
+    public Question getCurrentQuestion(){
+        return todaysQuestions.get(0);
     }
 
     public Phrase retrieveRandomPhrase() throws EmptyCollectionException{
-        if(phrases.isEmpty()){
+        if(allPhrases.isEmpty()){
             throw new EmptyCollectionException();
         }
         return retrievePhraseByIndex(random.nextInt(maxPhraseIndex));
     }
 
-    public void addPhrase(Phrase addedPhrase){
+    public void createPhrase(Phrase addedPhrase){
         if(addedPhrase == null){
             throw new IllegalArgumentException("Phrase can not be null");
         }
-        phrases.add(addedPhrase);
+        allPhrases.add(addedPhrase);
         try {
             HelperFactory.getHelper().getPhraseDao().create(addedPhrase);
         } catch (SQLException e) {
@@ -94,7 +91,7 @@ public class GuesswordRepository {
 
     private Phrase retrievePhraseByIndex(int index) {
 
-        for (Phrase phrase : phrases) {
+        for (Phrase phrase : allPhrases) {
             if (phrase.isInList(selectedLabels) && index >= phrase.getIndexStart() && index <= phrase.getIndexEnd()) {
                 return phrase;
             }
@@ -105,7 +102,7 @@ public class GuesswordRepository {
     private void reloadIndices() {
         System.out.println("reloadIndices() from PhraseRepository");
 
-        if(phrases.isEmpty()){
+        if(allPhrases.isEmpty()){
             return;
         }
 
@@ -120,7 +117,7 @@ public class GuesswordRepository {
         this.activePhrasesNumber = 0;
         this.activeUntrainedPhrasesNumber = 0;
 
-        for (Phrase phr : phrases) {
+        for (Phrase phr : allPhrases) {
             phr.setIndexStart(0);
             phr.setIndexEnd(0);
             if(phr.isInList(selectedLabels)){
@@ -137,7 +134,7 @@ public class GuesswordRepository {
         rangeOfUnTrained = activeTrainedPhrasesNumber > 0 ? 1 - CHANCE_OF_APPEARING_TRAINED_PHRASES : 1;
         scaleOfOneProb = rangeOfUnTrained / untrainedPhrasesProbabilityFactorsSumm;
 
-        for (Phrase currentPhrase : phrases) { //Sets indices for nonlearnt words
+        for (Phrase currentPhrase : allPhrases) { //Sets indices for nonlearnt words
             if(currentPhrase.isInList(selectedLabels)){
                 int indexStart;
                 int indexEnd;
@@ -194,5 +191,9 @@ public class GuesswordRepository {
 
     public void persistQuestion(Question question) {
 
+    }
+
+    public List<Question> getTodaysQuestions() {
+        return todaysQuestions;
     }
 }

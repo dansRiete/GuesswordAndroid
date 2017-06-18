@@ -11,19 +11,20 @@ import android.widget.Toast;
 import com.kuzko.aleksey.guessword.datamodel.Question;
 import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 
 public class LearnActivity extends BaseActivity implements View.OnClickListener {
 
-    private ArrayList<Question> askedPhrasesLog;
+//    private ArrayList<Question> askedPhrasesLog;
     private Button answerButton, buttonPreviousWrong, buttonPreviousRight, buttonIDoNotKnow, buttonIKnow;
     private QuestionsRecyclerAdapter questionsRecyclerAdapter;
+    private GuesswordRepository repository = GuesswordRepository.getInstance();
     private final static String ASKED_PHRASES_LOG = "ASKED_PHRASES_LOG";
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(ASKED_PHRASES_LOG, askedPhrasesLog);
+//        outState.putSerializable(ASKED_PHRASES_LOG, askedPhrasesLog);
     }
 
     @Override
@@ -32,7 +33,7 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn);
 
-        answerButton = (Button) findViewById(R.id.answerButton);
+        answerButton = (Button) findViewById(R.id.buttonAnswer);
         buttonPreviousWrong = (Button) findViewById(R.id.buttonPreviousWrong);
         buttonPreviousRight = (Button) findViewById(R.id.buttonPreviousRight);
         buttonIDoNotKnow = (Button) findViewById(R.id.buttonIDoNotKnow);
@@ -42,34 +43,49 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
         buttonIKnow.setOnClickListener(this);
         buttonPreviousRight.setOnClickListener(this);
         buttonIDoNotKnow.setOnClickListener(this);
-        if(savedInstanceState != null){
-            askedPhrasesLog = (ArrayList) savedInstanceState.getSerializable(ASKED_PHRASES_LOG);
+
+        /*if(savedInstanceState != null){
+            Object obj = savedInstanceState.getSerializable(ASKED_PHRASES_LOG);
+            if(obj != null && obj instanceof ArrayList){
+                //noinspection unchecked
+                askedPhrasesLog = (ArrayList) obj;
+            }else {
+                askedPhrasesLog = new ArrayList<>();
+            }
         }else {
             askedPhrasesLog = new ArrayList<>();
-        }
-        questionsRecyclerAdapter = new QuestionsRecyclerAdapter(askedPhrasesLog, this);
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(true);    // If confident of rec.view layout size isn't changed by content
+        }*/
+
+        questionsRecyclerAdapter = new QuestionsRecyclerAdapter(repository.getTodaysQuestions(), this);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        recyclerView.setHasFixedSize(true);    // If confident of rec.view layout size isn't changed by content
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(questionsRecyclerAdapter);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setAdapter(questionsRecyclerAdapter);
+        if(repository.getTodaysQuestions().size() == 0){
+            ask();
+        }
     }
 
     private void ask(){
         try {
-            Question askedQuestion = GuesswordRepository.getInstance().askQuestion();
-            askedPhrasesLog.add(0, askedQuestion);
+            Question askedQuestion = repository.askQuestion();
+//            askedPhrasesLog.add(0, askedQuestion);
             questionsRecyclerAdapter.notifyDataSetChanged();
             Log.d("INFO", "Phrase asked: " + askedQuestion.toString());
         } catch (EmptyCollectionException e) {
+            e.printStackTrace();
             Toast.makeText(this, "Phrases collection is empty", Toast.LENGTH_LONG).show();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Something went wrong during persisting question in DB", Toast.LENGTH_LONG).show();
         }
     }
     @Override
     public void onClick(View v) {
-        Question question = questionsRecyclerAdapter.retrieveArticle(0);
+        Question question = repository.getCurrentQuestion();
         switch (v.getId()){
-            case R.id.answerButton:
+            case R.id.buttonAnswer:
                 ask();
                 break;
             case R.id.buttonIKnow:

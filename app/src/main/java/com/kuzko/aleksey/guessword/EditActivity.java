@@ -69,7 +69,7 @@ public class EditActivity extends BaseActivity implements View.OnClickListener  
 
             Phrase addedPhrase = new Phrase(/*GuesswordRepository.getInstance().giveNewPhraseId(), */givenForeignWord, givenNativeWord, givenTranscription, givenLabel);
             phrasesRecyclerAdapter.add(addedPhrase);
-            GuesswordRepository.getInstance().addPhrase(addedPhrase);
+            GuesswordRepository.getInstance().createPhrase(addedPhrase);
             dialog.dismiss();
 
         });

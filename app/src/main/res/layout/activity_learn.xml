@@ -35,7 +35,7 @@
             android:inputType="text"
             />
         <Button
-            android:id="@+id/answerButton"
+            android:id="@+id/buttonAnswer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/button_answer"/>
