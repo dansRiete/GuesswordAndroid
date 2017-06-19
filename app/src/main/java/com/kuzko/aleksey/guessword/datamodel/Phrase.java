@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -30,35 +29,35 @@ public class Phrase implements Serializable {
     @DatabaseField(generatedId = true)
     private long id;
 
-    @Column(name = "for_word")
+    @DatabaseField()
     private String foreignWord;
 
-    @Column(name = "nat_word")
+    @DatabaseField()
     private String nativeWord;
 
-    @Column(name = "transcr")
+    @DatabaseField()
     private String transcription;
 
-    @Column(name = "prob_factor")
+    @DatabaseField()
     private double probabilityFactor;
 
-    @Column
+    @DatabaseField()
     private String label;
 
-    @Column(name = "create_date")
+    @DatabaseField()
     private Date collectionAddingDateTime;
 
-    @Column(name = "last_accs_date")
+    @DatabaseField()
     private Date lastAccessDateTime;
 
-    @Column(name = "rate")
+    @DatabaseField()
     private double multiplier;
 
     /*@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     public User user;*/
 
-    @Column(name = "is_deleted")
+    @DatabaseField()
     private boolean isDeleted;
 
     @Transient
@@ -105,7 +104,7 @@ public class Phrase implements Serializable {
 
     @Override
     public String toString() {
-        return id + ". " + foreignWord + " - " + nativeWord  + (transcription == null || transcription.equals("") ? "" : " [" + transcription + "]");
+        return "Phrase = {" + id + ". " + foreignWord + " - " + nativeWord  + (transcription == null || transcription.equals("") ? "" : " [" + transcription + "]") + ", prob=" + probabilityFactor + ", col add = " + collectionAddingDateTime + ", multiplier = " + multiplier + "}";
     }
 
     @Override

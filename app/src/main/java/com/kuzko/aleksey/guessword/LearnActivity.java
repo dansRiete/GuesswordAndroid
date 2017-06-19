@@ -19,7 +19,7 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
     private Button answerButton, buttonPreviousWrong, buttonPreviousRight, buttonIDoNotKnow, buttonIKnow;
     private QuestionsRecyclerAdapter questionsRecyclerAdapter;
     private GuesswordRepository repository = GuesswordRepository.getInstance();
-    private final static String ASKED_PHRASES_LOG = "ASKED_PHRASES_LOG";
+//    private final static String ASKED_PHRASES_LOG = "ASKED_PHRASES_LOG";
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -62,9 +62,7 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(questionsRecyclerAdapter);
-        if(repository.getTodaysQuestions().size() == 0){
-            ask();
-        }
+
     }
 
     private void ask(){
@@ -81,6 +79,7 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
             Toast.makeText(this, "Something went wrong during persisting question in DB", Toast.LENGTH_LONG).show();
         }
     }
+
     @Override
     public void onClick(View v) {
         Question question = repository.getCurrentQuestion();
@@ -102,6 +101,14 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
                 break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(repository.getTodaysQuestions().size() == 0 || repository.getCurrentQuestion().isAnswered()){
+            ask();
         }
     }
 }

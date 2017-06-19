@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kuzko.aleksey.guessword.datamodel.Phrase;
 import com.kuzko.aleksey.guessword.datamodel.Question;
 
 import java.text.SimpleDateFormat;
@@ -75,10 +76,15 @@ class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAda
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Question currentQuestion = questions.get(position);
+        Phrase askedPhrase = currentQuestion.getAskedPhrase();
+        String foreignWord = askedPhrase.getForeignWord();
+        String nativeWord = askedPhrase.getNativeWord();
+        String transcription = askedPhrase.getTranscription() != null && !askedPhrase.getTranscription().equals("") ? ("[" + askedPhrase.getTranscription() + "]") : "";
+        String stringRepresent = foreignWord + (currentQuestion.isAnswered() ? (" - " + nativeWord + " " + transcription) : "");
         int colorGreen = ContextCompat.getColor(context, R.color.colorGreen);
         int colorRed = ContextCompat.getColor(context, R.color.colorRed);
         int colorGray = ContextCompat.getColor(context, R.color.colorGray);
-        holder.textViewRecViewQuestion.setText(currentQuestion.toString());
+        holder.textViewRecViewQuestion.setText(stringRepresent);
         holder.textViewRecViewTime.setText(
                 new SimpleDateFormat("hh:mm:ss", Locale.ENGLISH)
                         .format(currentQuestion.getAskDate())

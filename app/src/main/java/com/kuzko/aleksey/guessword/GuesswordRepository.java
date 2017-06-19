@@ -1,5 +1,7 @@
 package com.kuzko.aleksey.guessword;
 
+import android.util.Log;
+
 import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.database.dao.PhraseDao;
 import com.kuzko.aleksey.guessword.database.dao.QuestionDao;
@@ -39,10 +41,10 @@ public class GuesswordRepository {
             questionDao = HelperFactory.getHelper().getQuestionDao();
             allPhrases = phraseDao.retrieveAll();
             todaysQuestions = questionDao.retrieveAll();
-            System.out.println("todaysQuestions");
+            /*System.out.println("todaysQuestions");
             for(Question q : todaysQuestions){
                 System.out.println(q.getAskedPhrase());
-            }
+            }*/
             reloadIndices();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -60,12 +62,15 @@ public class GuesswordRepository {
     public Question askQuestion() throws EmptyCollectionException, SQLException{
         Question askedQuestion = Question.compose(retrieveRandomPhrase());
         todaysQuestions.add(0, askedQuestion);
-        HelperFactory.getHelper().getQuestionDao().create(askedQuestion);
+//        HelperFactory.getHelper().getQuestionDao().create(askedQuestion);
         return askedQuestion;
     }
 
     public Question getCurrentQuestion(){
-        return todaysQuestions.get(0);
+        Question question = null;
+        if(!todaysQuestions.isEmpty())
+            question = todaysQuestions.get(0);
+        return question;
     }
 
     public Phrase retrieveRandomPhrase() throws EmptyCollectionException{
@@ -185,15 +190,19 @@ public class GuesswordRepository {
 
     }
 
-    public void updateQuestion(Question question) {
-
+    public void updateQuestion(Question question) throws SQLException {
+        questionDao.update(question);
     }
 
-    public void persistQuestion(Question question) {
-
+    public void persistQuestion(Question question) throws SQLException {
+        questionDao.create(question);
     }
 
     public List<Question> getTodaysQuestions() {
+        Log.i(getClass().getName(), todaysQuestions.toString());
+        for(Question question : todaysQuestions){
+            question.setAnswered(true);
+        }
         return todaysQuestions;
     }
 }

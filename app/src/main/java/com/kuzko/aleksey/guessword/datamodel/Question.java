@@ -1,21 +1,18 @@
 package com.kuzko.aleksey.guessword.datamodel;
 
+import com.j256.ormlite.field.DatabaseField;
 import com.kuzko.aleksey.guessword.GuesswordRepository;
+import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.utils.AnswerChecker;
 import com.kuzko.aleksey.guessword.utils.Hints;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -45,37 +42,37 @@ public class Question implements Serializable {
     @Transient
     private static final int MULTIPLIER_ACCURACY = 2;
 
-    @javax.persistence.Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @DatabaseField(generatedId = true)
     private long id;
 
-    @Column(name = "answer")
+    @DatabaseField()
     private String answerLiteral;
 
-    @Column(name = "date")
+    @DatabaseField()
     private Date askDate;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "phrase_key")
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "phrase_key")
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Phrase askedPhrase;
 
-    @Column(name = "answered_correctly")
+    @DatabaseField()
     private boolean answerCorrect;
 
     /*@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;*/
 
-    @Column(name = "init_probability_factor")
+    @DatabaseField()
     private double initialProbabilityFactor;
 
-    @Column(name = "init_multiplier")
+    @DatabaseField()
     private double initialProbabilityMultiplier;
 
-    @Column(name = "answered_probability_factor")
+    @DatabaseField()
     private double afterAnswerProbabilityFactor;
 
-    @Column(name = "answered_multiplier")
+    @DatabaseField()
     private double afterAnswerProbabilityMultiplier;
 
     @Transient
@@ -135,9 +132,10 @@ public class Question implements Serializable {
     }
 
     public void rightAnswer() {
-        System.out.println("CALL: rightAnswer() from Question - " + this + ", isAnswered()=" + isAnswered());
+        System.out.println("CALL: rightAnswer() from Question - " + this + ", isAnswered()=" + isAnswered() + ", answerCorrect=" + answerCorrect);
 
         if (getAskedPhrase().getLastAccessDateTime() != null && !lastInLog()) {
+            System.out.println("CALL: rightAnswer() from Question - " + this + ", isAnswered()=" + isAnswered() + ", answerCorrect=" + answerCorrect);
             return;
         }
 
@@ -155,7 +153,13 @@ public class Question implements Serializable {
             askedPhrase.setMultiplier(afterAnswerProbabilityMultiplier);
         }
 
-        GuesswordRepository.getInstance().updateProb(askedPhrase);
+        try {
+            HelperFactory.getHelper().getPhraseDao().update(askedPhrase);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+
         this.afterAnswerStartIndex = askedPhrase.getIndexStart();
         this.afterAnswerEndIndex = askedPhrase.getIndexEnd();
         this.answerCorrect = true;
@@ -167,9 +171,9 @@ public class Question implements Serializable {
         }*//* else {
 
         }*/
-        saveQuestion();
+        update();
         this.answered = true;
-        System.out.println("CALL: rightAnswer() from Question - " + this + ", isAnswered()=" + isAnswered());
+        System.out.println("CALL: rightAnswer() from Question - " + this + ", isAnswered()=" + isAnswered() + ", answerCorrect=" + answerCorrect);
 
     }
 
@@ -194,7 +198,13 @@ public class Question implements Serializable {
             askedPhrase.setMultiplier(afterAnswerProbabilityMultiplier);
         }
 
-        GuesswordRepository.getInstance().updateProb(askedPhrase);
+        try {
+            HelperFactory.getHelper().getPhraseDao().update(askedPhrase);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+
         this.afterAnswerStartIndex = askedPhrase.getIndexStart();
         this.afterAnswerEndIndex = askedPhrase.getIndexEnd();
         this.answerCorrect = false;
@@ -202,16 +212,21 @@ public class Question implements Serializable {
         if (answered) {
             this.answerLiteral = null;
         }
-        saveQuestion();
+        update();
         this.answered = true;
 
     }
 
-    public void saveQuestion() {
-        if (answered) {
-            GuesswordRepository.getInstance().updateQuestion(this);
-        } else {
-            GuesswordRepository.getInstance().persistQuestion(this);
+    public void update() {
+        try {
+            if (answered) {
+                GuesswordRepository.getInstance().updateQuestion(this);
+            } else {
+                GuesswordRepository.getInstance().persistQuestion(this);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Exception during updating phrase in DB");
         }
     }
 
@@ -331,6 +346,6 @@ public class Question implements Serializable {
 
     @Override
     public String toString() {
-        return askedPhrase.getNativeWord() + (answered ? " - " + askedPhrase.getForeignWord() : "");
+        return getAskedPhrase() + ", " + "answered=" + answered + ", isAnswerCorrect=" + isAnswerCorrect() + ", " + creationDate();
     }
 }
