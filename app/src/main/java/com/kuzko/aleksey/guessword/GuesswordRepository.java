@@ -1,7 +1,5 @@
 package com.kuzko.aleksey.guessword;
 
-import android.util.Log;
-
 import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.database.dao.PhraseDao;
 import com.kuzko.aleksey.guessword.database.dao.QuestionDao;
@@ -40,12 +38,10 @@ public class GuesswordRepository {
             phraseDao = HelperFactory.getHelper().getPhraseDao();
             questionDao = HelperFactory.getHelper().getQuestionDao();
             allPhrases = phraseDao.retrieveAll();
-            todaysQuestions = questionDao.retrieveAll();
-            /*System.out.println("todaysQuestions");
-            for(Question q : todaysQuestions){
-                System.out.println(q.getAskedPhrase());
-            }*/
-            reloadIndices();
+            todaysQuestions = questionDao.queryBuilder().orderBy("askDate", false).query();
+            for(Question question : todaysQuestions){
+                question.setAnswered(true);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Error during retrieving allPhrases collection from DB");
@@ -73,7 +69,16 @@ public class GuesswordRepository {
         return question;
     }
 
+
+    public Question getPreviousQuestion(){
+        Question question = null;
+        if(todaysQuestions.size() >= 2)
+            question = todaysQuestions.get(1);
+        return question;
+    }
+
     public Phrase retrieveRandomPhrase() throws EmptyCollectionException{
+        reloadIndices();
         if(allPhrases.isEmpty()){
             throw new EmptyCollectionException();
         }
@@ -91,7 +96,6 @@ public class GuesswordRepository {
             e.printStackTrace();
             throw new RuntimeException("Something went wrong during creating Phrase in DB");
         }
-        reloadIndices();
     }
 
     private Phrase retrievePhraseByIndex(int index) {
@@ -199,10 +203,6 @@ public class GuesswordRepository {
     }
 
     public List<Question> getTodaysQuestions() {
-        Log.i(getClass().getName(), todaysQuestions.toString());
-        for(Question question : todaysQuestions){
-            question.setAnswered(true);
-        }
         return todaysQuestions;
     }
 }

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+              android:layout_marginTop="5dp"
+              tools:layout_marginTop="30dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textViewPhraseAdapterLabel"
+            tools:text="CARS"
+            tools:textColor="@color/colorGreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:text="@string/phrasesRecView_created"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="3dp"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/textViewPhraseAdapterCreatedDate"
+            tools:text="19/02/2017"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:text="@string/phrasesRecView_accessed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="3dp"
+            android:textSize="12sp"/>
+
+
+        <TextView
+            android:id="@+id/textViewPhraseAdapterAccessDate"
+            tools:text="15/06/2017 15:23"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/phrasesRecView_probability"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="3dp"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/textViewPhraseAdapterProb"
+            tools:text="30.0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:text="@string/phrasesRecView_multiplier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="3dp"
+            android:textSize="12sp"/>
+
+
+
+        <TextView
+            android:id="@+id/textViewPhraseAdapterMultiplier"
+            tools:text="1.44"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/textViewRecViewQuestion"
+        tools:text="Hello World - Привет мир [хэлоу ворлд]"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginLeft="7dp"
+        android:textSize="14sp" />
+
+</LinearLayout>

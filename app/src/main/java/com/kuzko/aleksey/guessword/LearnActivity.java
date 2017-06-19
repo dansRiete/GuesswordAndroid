@@ -10,16 +10,15 @@ import android.widget.Toast;
 
 import com.kuzko.aleksey.guessword.datamodel.Question;
 import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
+import com.kuzko.aleksey.guessword.utils.QuestionsRecyclerAdapter;
 
 import java.sql.SQLException;
 
 public class LearnActivity extends BaseActivity implements View.OnClickListener {
 
-//    private ArrayList<Question> askedPhrasesLog;
     private Button answerButton, buttonPreviousWrong, buttonPreviousRight, buttonIDoNotKnow, buttonIKnow;
     private QuestionsRecyclerAdapter questionsRecyclerAdapter;
     private GuesswordRepository repository = GuesswordRepository.getInstance();
-//    private final static String ASKED_PHRASES_LOG = "ASKED_PHRASES_LOG";
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -43,19 +42,6 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
         buttonIKnow.setOnClickListener(this);
         buttonPreviousRight.setOnClickListener(this);
         buttonIDoNotKnow.setOnClickListener(this);
-
-        /*if(savedInstanceState != null){
-            Object obj = savedInstanceState.getSerializable(ASKED_PHRASES_LOG);
-            if(obj != null && obj instanceof ArrayList){
-                //noinspection unchecked
-                askedPhrasesLog = (ArrayList) obj;
-            }else {
-                askedPhrasesLog = new ArrayList<>();
-            }
-        }else {
-            askedPhrasesLog = new ArrayList<>();
-        }*/
-
         questionsRecyclerAdapter = new QuestionsRecyclerAdapter(repository.getTodaysQuestions(), this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);    // If confident of rec.view layout size isn't changed by content
@@ -65,38 +51,50 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
 
     }
 
-    private void ask(){
+    private void newQuestion(){
         try {
-            Question askedQuestion = repository.askQuestion();
-//            askedPhrasesLog.add(0, askedQuestion);
-            questionsRecyclerAdapter.notifyDataSetChanged();
-            Log.d("INFO", "Phrase asked: " + askedQuestion.toString());
+            repository.askQuestion();
         } catch (EmptyCollectionException e) {
             e.printStackTrace();
             Toast.makeText(this, "Phrases collection is empty", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Something went wrong during persisting question in DB", Toast.LENGTH_LONG).show();
+            throw new RuntimeException("Exception during persisting question in DB");
         }
     }
 
     @Override
     public void onClick(View v) {
-        Question question = repository.getCurrentQuestion();
+        Question currentQuestion = repository.getCurrentQuestion();
+        Question previousQuestion = repository.getPreviousQuestion();
         switch (v.getId()){
             case R.id.buttonAnswer:
-                ask();
+                newQuestion();
                 break;
             case R.id.buttonIKnow:
-                if(question != null){
-                    question.rightAnswer();
-                    ask();
+                if(currentQuestion != null){
+                    currentQuestion.rightAnswer();
+                    newQuestion();
+                    questionsRecyclerAdapter.notifyDataSetChanged();
                 }
                 break;
             case R.id.buttonIDoNotKnow:
-                if(question != null){
-                    question.wrongAnswer();
-                    ask();
+                if(currentQuestion != null){
+                    currentQuestion.wrongAnswer();
+                    newQuestion();
+                    questionsRecyclerAdapter.notifyDataSetChanged();
+                }
+                break;
+            case R.id.buttonPreviousRight:
+                if(currentQuestion != null){
+                    previousQuestion.rightAnswer();
+                    questionsRecyclerAdapter.notifyDataSetChanged();
+                }
+                break;
+            case R.id.buttonPreviousWrong:
+                if(currentQuestion != null){
+                    previousQuestion.wrongAnswer();
+                    questionsRecyclerAdapter.notifyDataSetChanged();
                 }
                 break;
             default:
@@ -108,7 +106,7 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
     protected void onResume() {
         super.onResume();
         if(repository.getTodaysQuestions().size() == 0 || repository.getCurrentQuestion().isAnswered()){
-            ask();
+            newQuestion();
         }
     }
 }

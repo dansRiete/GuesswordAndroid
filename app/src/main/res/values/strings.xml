@@ -24,4 +24,12 @@
     <string name="textView_recView_right">right</string>
     <string name="textView_recView_slash">/</string>
     <string name="textView_recView_wrong">wrong</string>
+    <string name="no_label">NO LABEL</string>
+    <string name="phrasesRecView_created">Created:</string>
+    <string name="phrasesRecView_accessed">Accessed:</string>
+    <string name="phrasesRecView_probability">Probability:</string>
+    <string name="phrasesRecView_multiplier">Multiplier:</string>
+    <string name="unknown_date">UNKNOWN</string>
+    <string name="never_accessed">NEVER</string>
+    <string name="save_dialog_button">Save</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.kuzko.aleksey.guessword;
+package com.kuzko.aleksey.guessword.utils;
 
 /**
  * Created by Aleks on 20.03.2017.
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kuzko.aleksey.guessword.R;
 import com.kuzko.aleksey.guessword.datamodel.Phrase;
 import com.kuzko.aleksey.guessword.datamodel.Question;
 
@@ -22,12 +23,12 @@ import java.util.List;
 import java.util.Locale;
 
 
-class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAdapter.ViewHolder> {
+public class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAdapter.ViewHolder> {
 
     private List<Question> questions = new ArrayList<>();
     private Context context;
 
-    QuestionsRecyclerAdapter(List<Question> dataset, Context context) {
+    public QuestionsRecyclerAdapter(List<Question> dataset, Context context) {
         questions = dataset;
         this.context = context;
     }
@@ -38,7 +39,7 @@ class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAda
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewRecViewQuestion, textViewRecViewTime, textViewRecViewRight, textViewRecViewWrong;
+        TextView textViewRecViewQuestion, textViewRecViewTime, textViewRecViewRight, textViewRecViewWrong, textViewRecViewSlash;
         ImageView imageView;
         ViewHolder(View view) {
             super(view);
@@ -46,6 +47,7 @@ class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAda
             textViewRecViewTime = (TextView) view.findViewById(R.id.textViewRecViewTime);
             textViewRecViewRight = (TextView) view.findViewById(R.id.textViewRecViewRight);
             textViewRecViewWrong = (TextView) view.findViewById(R.id.textViewRecViewWrong);
+            textViewRecViewSlash = (TextView) view.findViewById(R.id.textViewRecViewSlash);
             imageView = (ImageView) view.findViewById(R.id.image);
         }
     }
@@ -69,33 +71,50 @@ class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAda
 
     @Override
     public QuestionsRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_question_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_questions_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
         Question currentQuestion = questions.get(position);
         Phrase askedPhrase = currentQuestion.getAskedPhrase();
+
         String foreignWord = askedPhrase.getForeignWord();
         String nativeWord = askedPhrase.getNativeWord();
         String transcription = askedPhrase.getTranscription() != null && !askedPhrase.getTranscription().equals("") ? ("[" + askedPhrase.getTranscription() + "]") : "";
         String stringRepresent = foreignWord + (currentQuestion.isAnswered() ? (" - " + nativeWord + " " + transcription) : "");
+
         int colorGreen = ContextCompat.getColor(context, R.color.colorGreen);
         int colorRed = ContextCompat.getColor(context, R.color.colorRed);
         int colorGray = ContextCompat.getColor(context, R.color.colorGray);
+
         holder.textViewRecViewQuestion.setText(stringRepresent);
-        holder.textViewRecViewTime.setText(
-                new SimpleDateFormat("hh:mm:ss", Locale.ENGLISH)
+        holder.textViewRecViewTime.setText(new SimpleDateFormat("HH:mm:ss", Locale.getDefault())
                         .format(currentQuestion.getAskDate())
         );
-        holder.textViewRecViewRight.setTextColor(colorRed);
-        holder.textViewRecViewRight.setTextColor(currentQuestion.isAnswered() ?
-                (currentQuestion.isAnswerCorrect() ? colorGreen : colorGray) : colorGray
-        );
-        holder.textViewRecViewWrong.setTextColor(currentQuestion.isAnswered() ?
-                (currentQuestion.isAnswerCorrect() ? colorGray : colorRed) : colorGray
-        );
+
+        if(currentQuestion.isAnswered()){
+            if(currentQuestion.isAnswerCorrect()){
+                holder.textViewRecViewRight.setTextColor(colorGreen);
+                holder.textViewRecViewWrong.setTextColor(colorGray);
+            }else {
+                holder.textViewRecViewWrong.setTextColor(colorRed);
+                holder.textViewRecViewRight.setTextColor(colorGray);
+            }
+        }else {
+            holder.textViewRecViewRight.setTextColor(colorGray);
+            holder.textViewRecViewWrong.setTextColor(colorGray);
+        }
+
+        if(position == 0){
+            holder.textViewRecViewQuestion.setShadowLayer(5.0f, 2.0f, 2.0f, colorGray);
+            holder.textViewRecViewTime.setShadowLayer(5.0f, 2.0f, 2.0f, colorGray);
+            holder.textViewRecViewRight.setShadowLayer(5.0f, 2.0f, 2.0f, colorGray);
+            holder.textViewRecViewWrong.setShadowLayer(5.0f, 2.0f, 2.0f, colorGray);
+            holder.textViewRecViewSlash.setShadowLayer(5.0f, 2.0f, 2.0f, colorGray);
+        }
     }
 
     @Override
