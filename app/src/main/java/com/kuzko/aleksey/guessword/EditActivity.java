@@ -21,11 +21,13 @@ public class EditActivity extends BaseActivity implements View.OnClickListener  
     private AlertDialog.Builder alertDialog;
     private PhrasesRecyclerAdapter phrasesRecyclerAdapter;
     private FloatingActionButton floatingActionButton;
+    private MyApplication application;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+        application = (MyApplication) getApplication();
         floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingButtonAddPhrase);
         floatingActionButton.setOnClickListener(v -> {
             removeView();
@@ -67,7 +69,7 @@ public class EditActivity extends BaseActivity implements View.OnClickListener  
             String givenTranscription = editTextDialogTranscription.getText().toString();
             String givenLabel = editTextDialogLabel.getText().toString();
 
-            Phrase addedPhrase = new Phrase(givenForeignWord, givenNativeWord, givenTranscription, givenLabel);
+            Phrase addedPhrase = new Phrase(givenForeignWord, givenNativeWord, givenTranscription, givenLabel, application.retrieveLoggedUser());
             phrasesRecyclerAdapter.add(addedPhrase);
             GuesswordRepository.getInstance().createPhrase(addedPhrase);
             dialog.dismiss();

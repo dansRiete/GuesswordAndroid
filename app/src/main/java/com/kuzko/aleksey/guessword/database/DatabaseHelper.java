@@ -9,8 +9,10 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.kuzko.aleksey.guessword.database.dao.PhraseDao;
 import com.kuzko.aleksey.guessword.database.dao.QuestionDao;
+import com.kuzko.aleksey.guessword.database.dao.UserDao;
 import com.kuzko.aleksey.guessword.datamodel.Phrase;
 import com.kuzko.aleksey.guessword.datamodel.Question;
+import com.kuzko.aleksey.guessword.datamodel.User;
 
 import java.sql.SQLException;
 
@@ -25,6 +27,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String TAG = DatabaseHelper.class.getSimpleName();
     private PhraseDao phraseDao;
     private QuestionDao questionDao;
+    private UserDao userDao;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -36,6 +39,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         {
             TableUtils.createTable(connectionSource, Phrase.class);
             TableUtils.createTable(connectionSource, Question.class);
+            TableUtils.createTable(connectionSource, User.class);
         }
         catch (SQLException e){
             Log.e(TAG, "error creating DB " + DATABASE_NAME);
@@ -48,6 +52,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try{
             TableUtils.dropTable(connectionSource, Phrase.class, true);
             TableUtils.dropTable(connectionSource, Question.class, true);
+            TableUtils.dropTable(connectionSource, User.class, true);
             onCreate(database, connectionSource);
         }
         catch (SQLException e){
@@ -68,6 +73,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             questionDao = new QuestionDao(getConnectionSource(), Question.class);
         }
         return questionDao;
+    }
+
+    public UserDao getUserDao() throws SQLException{
+        if(userDao == null){
+            userDao = new UserDao(getConnectionSource(), User.class);
+        }
+        return userDao;
     }
 
     @Override

@@ -11,7 +11,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:padding="5dp"
+    android:padding="15dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
@@ -36,6 +36,13 @@
             android:layout_marginTop="30dp"
             android:layout_height="0dp"
             android:layout_weight="1"/>
+
+        <EditText
+            android:id="@+id/editTextLoginUserPassword"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password" />
 
         <Button
             android:id="@+id/buttonLogin"
@@ -63,16 +70,19 @@
             android:id="@+id/editTextNewUsersName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name" />
+            android:hint="Your nickname" />
 
         <EditText
-            android:id="@+id/editTextPassword"
+            android:id="@+id/editTextNewUsersPassword"
+            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password (Optional)" />
 
         <EditText
-            android:id="@+id/editTextPasswordConfirm"
+            android:id="@+id/editTextNewUsersPasswordConfirm"
+
+            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password confirmation" />
