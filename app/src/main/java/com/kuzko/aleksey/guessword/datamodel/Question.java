@@ -51,17 +51,14 @@ public class Question implements Serializable {
     @DatabaseField()
     private Date askDate;
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "phrase_key")
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Phrase askedPhrase;
 
     @DatabaseField()
     private boolean answerCorrect;
 
-    /*@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private User user;*/
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private User user;
 
     @DatabaseField()
     private double initialProbabilityFactor;
@@ -107,7 +104,7 @@ public class Question implements Serializable {
         this.initLastAccessDate = askedPhrase.getLastAccessDateTime();
         //TODO WTF?!
         this.askDate /*= askedPhrase.lastAccessDateTime*/ = new Timestamp(System.currentTimeMillis());
-//        this.user = askedPhrase.getUser();
+        this.user = askedPhrase.getUser();
     }
 
     public static Question compose(Phrase askedPhrase) {

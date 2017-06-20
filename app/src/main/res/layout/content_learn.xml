@@ -24,7 +24,7 @@
 
         <EditText
             android:hint="@string/string_hint_answerField"
-            android:id="@+id/editTextCity"
+            android:id="@+id/editTextAnswer"
             android:layout_width="0dp"
             android:layout_weight="0.60"
             android:layout_height="wrap_content"

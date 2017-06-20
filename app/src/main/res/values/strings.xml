@@ -21,9 +21,9 @@
     <string name="drawer_item_menu_learn">Learn</string>
     <string name="edit_text_hint_transription">Transcription</string>
     <string name="edit_text_hint_label">Label</string>
-    <string name="textView_recView_right">right</string>
+    <string name="textView_recView_right">RIGHT</string>
     <string name="textView_recView_slash">/</string>
-    <string name="textView_recView_wrong">wrong</string>
+    <string name="textView_recView_wrong">WRONG</string>
     <string name="no_label">NO LABEL</string>
     <string name="phrasesRecView_created">Created:</string>
     <string name="phrasesRecView_accessed">Accessed:</string>
@@ -32,4 +32,18 @@
     <string name="unknown_date">UNKNOWN</string>
     <string name="never_accessed">NEVER</string>
     <string name="save_dialog_button">Save</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
 </resources>

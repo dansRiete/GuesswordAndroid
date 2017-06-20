@@ -84,7 +84,7 @@ public class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecy
         String foreignWord = askedPhrase.getForeignWord();
         String nativeWord = askedPhrase.getNativeWord();
         String transcription = askedPhrase.getTranscription() != null && !askedPhrase.getTranscription().equals("") ? ("[" + askedPhrase.getTranscription() + "]") : "";
-        String stringRepresent = foreignWord + (currentQuestion.isAnswered() ? (" - " + nativeWord + " " + transcription) : "");
+        String stringRepresent = nativeWord + (currentQuestion.isAnswered() ? (" - " + foreignWord + " " + transcription) : "");
 
         int colorGreen = ContextCompat.getColor(context, R.color.colorGreen);
         int colorRed = ContextCompat.getColor(context, R.color.colorRed);
@@ -109,10 +109,11 @@ public class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecy
         }
 
         if(position == 0){
+            holder.textViewRecViewQuestion.setTextSize(20);
             holder.textViewRecViewQuestion.setShadowLayer(5.0f, 2.0f, 2.0f, colorGray);
             holder.textViewRecViewTime.setShadowLayer(5.0f, 2.0f, 2.0f, colorGray);
-            holder.textViewRecViewRight.setShadowLayer(5.0f, 2.0f, 2.0f, colorGray);
-            holder.textViewRecViewWrong.setShadowLayer(5.0f, 2.0f, 2.0f, colorGray);
+            holder.textViewRecViewRight.setShadowLayer(5.0f, 1.0f, 1.0f, colorGray);
+            holder.textViewRecViewWrong.setShadowLayer(5.0f, 1.0f, 1.0f, colorGray);
             holder.textViewRecViewSlash.setShadowLayer(5.0f, 2.0f, 2.0f, colorGray);
         }
     }

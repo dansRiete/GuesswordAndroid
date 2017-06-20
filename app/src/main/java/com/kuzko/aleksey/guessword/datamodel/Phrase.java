@@ -53,9 +53,8 @@ public class Phrase implements Serializable {
     @DatabaseField()
     private double multiplier;
 
-    /*@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    public User user;*/
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    public User user;
 
     @DatabaseField()
     private boolean isDeleted;
@@ -69,9 +68,9 @@ public class Phrase implements Serializable {
     public Phrase() {
     }
 
-    public Phrase(/*long id, */String foreignWord, String nativeWord, String transcription, String label /*, User user*/){
+    public Phrase(/*long id, */String foreignWord, String nativeWord, String transcription, String label , User user){
 //        this.id = id;
-//        this.user = user;
+        this.user = user;
         this.foreignWord = foreignWord;
         this.nativeWord = nativeWord;
         this.transcription = transcription == null ? "" : transcription;
@@ -183,12 +182,12 @@ public class Phrase implements Serializable {
     public void setIndexEnd(int indexEnd) {
         this.indexEnd = indexEnd;
     }
-    /*public User getUser() {
+    public User getUser() {
         return user;
     }
     public void setUser(User user) {
         this.user = user;
-    }*/
+    }
     public double getMultiplier() {
         return multiplier;
     }

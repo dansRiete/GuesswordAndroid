@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kuzko.aleksey.guessword.datamodel.Question;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 public class LearnActivity extends BaseActivity implements View.OnClickListener {
 
     private Button answerButton, buttonPreviousWrong, buttonPreviousRight, buttonIDoNotKnow, buttonIKnow;
+    private EditText editTextAnswer;
     private QuestionsRecyclerAdapter questionsRecyclerAdapter;
     private GuesswordRepository repository = GuesswordRepository.getInstance();
 
@@ -37,6 +39,7 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
         buttonPreviousRight = (Button) findViewById(R.id.buttonPreviousRight);
         buttonIDoNotKnow = (Button) findViewById(R.id.buttonIDoNotKnow);
         buttonIKnow = (Button) findViewById(R.id.buttonIKnow);
+        editTextAnswer = (EditText) findViewById(R.id.editTextAnswer);
         answerButton.setOnClickListener(this);
         buttonPreviousWrong.setOnClickListener(this);
         buttonIKnow.setOnClickListener(this);
@@ -69,37 +72,38 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
         Question previousQuestion = repository.getPreviousQuestion();
         switch (v.getId()){
             case R.id.buttonAnswer:
+                currentQuestion.answer(editTextAnswer.getText().toString());
+                editTextAnswer.setText("");
                 newQuestion();
                 break;
             case R.id.buttonIKnow:
                 if(currentQuestion != null){
                     currentQuestion.rightAnswer();
+                    editTextAnswer.setText("");
                     newQuestion();
-                    questionsRecyclerAdapter.notifyDataSetChanged();
                 }
                 break;
             case R.id.buttonIDoNotKnow:
                 if(currentQuestion != null){
                     currentQuestion.wrongAnswer();
+                    editTextAnswer.setText("");
                     newQuestion();
-                    questionsRecyclerAdapter.notifyDataSetChanged();
                 }
                 break;
             case R.id.buttonPreviousRight:
                 if(currentQuestion != null){
                     previousQuestion.rightAnswer();
-                    questionsRecyclerAdapter.notifyDataSetChanged();
                 }
                 break;
             case R.id.buttonPreviousWrong:
                 if(currentQuestion != null){
                     previousQuestion.wrongAnswer();
-                    questionsRecyclerAdapter.notifyDataSetChanged();
                 }
                 break;
             default:
                 break;
         }
+        questionsRecyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
