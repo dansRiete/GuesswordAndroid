@@ -2,6 +2,7 @@
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="8dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,13 +12,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:padding="15dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="100dp"
             android:gravity="center"
             android:text="Welcome to GuessWord"
             android:textSize="30dp"/>
@@ -30,23 +31,37 @@
             android:text="Please log in to continue"
             android:textSize="20dp"/>
 
-        <Spinner
-            android:id="@+id/spinnerUsersList"
-            android:layout_width="match_parent"
-            android:layout_marginTop="30dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-        <EditText
-            android:id="@+id/editTextLoginUserPassword"
-            android:inputType="textPassword"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password" />
+            android:focusableInTouchMode="true"
+            android:layout_marginTop="30dp"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/spinnerUsersList"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <EditText
+                    android:id="@+id/editTextLoginUserPassword"
+                    android:inputType="textPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Password" />
+
+        </LinearLayout>
+
+
 
         <Button
             android:id="@+id/buttonLogin"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
+            android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:text="Log in"/>
 
@@ -56,45 +71,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:gravity="center"
-            android:textSize="25dp"
+            android:textSize="20sp"
             android:text="Create new user"/>
 
-    <LinearLayout
-        android:id="@+id/linearLayoutCreateUser"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/editTextNewUsersName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Your nickname" />
-
-        <EditText
-            android:id="@+id/editTextNewUsersPassword"
-            android:inputType="textPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Password (Optional)" />
-
-        <EditText
-            android:id="@+id/editTextNewUsersPasswordConfirm"
-
-            android:inputType="textPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Password confirmation" />
-
-        <Button
-            android:id="@+id/buttonCreateUser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Create" />
-
-
-    </LinearLayout>
 
 </LinearLayout>
 

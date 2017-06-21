@@ -20,7 +20,7 @@ public class GuesswordRepository {
 
     private static GuesswordRepository instance;
     private List<Phrase> allPhrases;
-
+    private static MyApplication application;
     private List<Question> todaysQuestions;
     private Random random = new Random();
     private PhraseDao phraseDao;
@@ -37,7 +37,7 @@ public class GuesswordRepository {
         try {
             phraseDao = HelperFactory.getHelper().getPhraseDao();
             questionDao = HelperFactory.getHelper().getQuestionDao();
-            allPhrases = phraseDao.retrieveAll();
+            allPhrases = phraseDao.queryForAll();
             todaysQuestions = questionDao.queryBuilder().orderBy("askDate", false).query();
             for(Question question : todaysQuestions){
                 question.setAnswered(true);
@@ -49,6 +49,19 @@ public class GuesswordRepository {
     }
 
     public static GuesswordRepository getInstance(){
+        if(application == null){
+            throw new IllegalStateException("You must invoke getInstance(MyApplication _application) first!");
+        }
+        if(instance == null){
+            instance = new GuesswordRepository();
+        }
+        return instance;
+    }
+
+
+
+    public static GuesswordRepository getInstance(MyApplication _application){
+        application = _application;
         if(instance == null){
             instance = new GuesswordRepository();
         }

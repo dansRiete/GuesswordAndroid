@@ -68,8 +68,7 @@ public class Phrase implements Serializable {
     public Phrase() {
     }
 
-    public Phrase(/*long id, */String foreignWord, String nativeWord, String transcription, String label , User user){
-//        this.id = id;
+    public Phrase(String foreignWord, String nativeWord, String transcription, String label, User user){
         this.user = user;
         this.foreignWord = foreignWord;
         this.nativeWord = nativeWord;

@@ -1,4 +1,4 @@
-package com.kuzko.aleksey.guessword;
+package com.kuzko.aleksey.guessword.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,13 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.kuzko.aleksey.guessword.GuesswordRepository;
+import com.kuzko.aleksey.guessword.MyApplication;
+import com.kuzko.aleksey.guessword.R;
 import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.datamodel.Phrase;
 import com.kuzko.aleksey.guessword.utils.PhrasesRecyclerAdapter;
 
 import java.sql.SQLException;
 
-public class EditActivity extends BaseActivity implements View.OnClickListener  {
+public class EditActivity extends DrawerActivity implements View.OnClickListener  {
 
     private View dialogView;
     private AlertDialog.Builder alertDialog;
@@ -69,7 +72,7 @@ public class EditActivity extends BaseActivity implements View.OnClickListener  
             String givenTranscription = editTextDialogTranscription.getText().toString();
             String givenLabel = editTextDialogLabel.getText().toString();
 
-            Phrase addedPhrase = new Phrase(givenForeignWord, givenNativeWord, givenTranscription, givenLabel, application.retrieveLoggedUser());
+            Phrase addedPhrase = new Phrase(givenForeignWord, givenNativeWord, givenTranscription, givenLabel, application.retrieveActiveUser());
             phrasesRecyclerAdapter.add(addedPhrase);
             GuesswordRepository.getInstance().createPhrase(addedPhrase);
             dialog.dismiss();

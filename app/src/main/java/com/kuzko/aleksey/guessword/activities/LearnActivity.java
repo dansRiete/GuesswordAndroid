@@ -1,4 +1,4 @@
-package com.kuzko.aleksey.guessword;
+package com.kuzko.aleksey.guessword.activities;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,18 +9,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kuzko.aleksey.guessword.GuesswordRepository;
+import com.kuzko.aleksey.guessword.MyApplication;
+import com.kuzko.aleksey.guessword.R;
 import com.kuzko.aleksey.guessword.datamodel.Question;
 import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
 import com.kuzko.aleksey.guessword.utils.QuestionsRecyclerAdapter;
 
 import java.sql.SQLException;
 
-public class LearnActivity extends BaseActivity implements View.OnClickListener {
+public class LearnActivity extends DrawerActivity implements View.OnClickListener {
 
     private Button answerButton, buttonPreviousWrong, buttonPreviousRight, buttonIDoNotKnow, buttonIKnow;
     private EditText editTextAnswer;
     private QuestionsRecyclerAdapter questionsRecyclerAdapter;
-    private GuesswordRepository repository = GuesswordRepository.getInstance();
+    private GuesswordRepository repository;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -33,7 +36,7 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
         Log.i(getLocalClassName(), "onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn);
-
+        repository = GuesswordRepository.getInstance((MyApplication) getApplication());
         answerButton = (Button) findViewById(R.id.buttonAnswer);
         buttonPreviousWrong = (Button) findViewById(R.id.buttonPreviousWrong);
         buttonPreviousRight = (Button) findViewById(R.id.buttonPreviousRight);
@@ -58,7 +61,7 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
         try {
             repository.askQuestion();
         } catch (EmptyCollectionException e) {
-            e.printStackTrace();
+            Log.w(getLocalClassName(), "Phrases collection is empty");
             Toast.makeText(this, "Phrases collection is empty", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -72,10 +75,12 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
         Question previousQuestion = repository.getPreviousQuestion();
         switch (v.getId()){
             case R.id.buttonAnswer:
-                currentQuestion.answer(editTextAnswer.getText().toString());
-                editTextAnswer.setText("");
-                newQuestion();
-                break;
+                if(currentQuestion != null) {
+                    currentQuestion.answer(editTextAnswer.getText().toString());
+                    editTextAnswer.setText("");
+                    newQuestion();
+                    break;
+                }
             case R.id.buttonIKnow:
                 if(currentQuestion != null){
                     currentQuestion.rightAnswer();
@@ -91,12 +96,12 @@ public class LearnActivity extends BaseActivity implements View.OnClickListener 
                 }
                 break;
             case R.id.buttonPreviousRight:
-                if(currentQuestion != null){
+                if(previousQuestion != null){
                     previousQuestion.rightAnswer();
                 }
                 break;
             case R.id.buttonPreviousWrong:
-                if(currentQuestion != null){
+                if(previousQuestion != null){
                     previousQuestion.wrongAnswer();
                 }
                 break;

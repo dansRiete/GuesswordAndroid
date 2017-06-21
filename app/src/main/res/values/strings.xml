@@ -46,4 +46,6 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="drawer_item_menu_logout">Logout</string>
+    <string name="no_available_users_msg">No available users</string>
 </resources>

@@ -57,7 +57,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return login;
+        return "User(login = " + login + ", password = " + password + ")";
     }
 
     public void setLogin(String login) {
