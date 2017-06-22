@@ -12,11 +12,8 @@ import android.widget.EditText;
 import com.kuzko.aleksey.guessword.GuesswordRepository;
 import com.kuzko.aleksey.guessword.MyApplication;
 import com.kuzko.aleksey.guessword.R;
-import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.datamodel.Phrase;
 import com.kuzko.aleksey.guessword.utils.PhrasesRecyclerAdapter;
-
-import java.sql.SQLException;
 
 public class EditActivity extends DrawerActivity implements View.OnClickListener  {
 
@@ -42,13 +39,7 @@ public class EditActivity extends DrawerActivity implements View.OnClickListener
     @Override
     protected void onStart() {
         super.onStart();
-        try {
-            phrasesRecyclerAdapter = new PhrasesRecyclerAdapter(HelperFactory.getHelper().getPhraseDao().retrieveAll(), this);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Fetching Phrases in onActivityCreated()");
-        }
-
+        phrasesRecyclerAdapter = new PhrasesRecyclerAdapter(GuesswordRepository.getInstance().getAllPhrases(), this);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.phrases_edit_recycler_view);
         mRecyclerView.setHasFixedSize(true);    // If confident of rec.view layout size isn't changed by content
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);

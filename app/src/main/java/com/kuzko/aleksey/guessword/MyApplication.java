@@ -4,13 +4,14 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.datamodel.User;
 import com.kuzko.aleksey.guessword.exceptions.NicknameExistsException;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,12 +41,22 @@ public class MyApplication extends Application {
         Log.d(LOG_TAG, users + "givenLogin = " + givenLogin + ", givenPassword = " + givenPassword);
         User currentUser = retrieveUserByLogin(givenLogin);
         if(currentUser != null) {
-            if(currentUser.getPassword() == null && (givenPassword == null || givenPassword.equals(""))){
-                writeLoggedUser(currentUser);
-                return true;
-            }else if(currentUser.getPassword().equals(givenPassword)){
-                writeLoggedUser(currentUser);
-                return true;
+            try {
+                if (currentUser.getPassword() == null &&
+                    (givenPassword == null || givenPassword.equals(""))) {
+                    writeLoggedUser(currentUser);
+                    currentUser.setLastEnter(new Date(System.currentTimeMillis()));
+                    HelperFactory.getHelper().getUserDao().update(currentUser);
+                    return true;
+                } else if (currentUser.getPassword().equals(givenPassword)) {
+                    writeLoggedUser(currentUser);
+                    currentUser.setLastEnter(new Date(System.currentTimeMillis()));
+                    HelperFactory.getHelper().getUserDao().update(currentUser);
+                    return true;
+                }
+            }catch (SQLException e){
+                e.printStackTrace();
+                throw new RuntimeException("update(currentUser) in MyApplication login() went wrong");
             }
         }
         return false;
@@ -53,6 +64,7 @@ public class MyApplication extends Application {
 
     public void logout(){
         eraseLoggedUser();
+        GuesswordRepository.close();
     }
 
     private @Nullable User retrieveUserByLogin(String login){
@@ -65,14 +77,6 @@ public class MyApplication extends Application {
             }
         }
         return null;
-    }
-
-    public List<String> retrieveUsersLogins() {
-        ArrayList<String> logins = new ArrayList<>();
-        for(User user : users){
-            logins.add(/*(hasUserPassword(user) ? "\uD83D\uDD12" : "") +*/ user.getLogin());
-        }
-        return logins;
     }
 
     public boolean hasUserPassword(String login){
@@ -129,26 +133,10 @@ public class MyApplication extends Application {
     private void reloadUsers(){
         try {
             users = HelperFactory.getHelper().getUserDao().retrieveAll();
-            sortUsersByCreatingDate(users);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Something went wrong during retrieving Users in MyApplication class");
         }
-    }
-
-    private void sortUsersByCreatingDate(List<User> usersToBeSorted){
-        Collections.sort(usersToBeSorted, new Comparator<User>() {
-            @Override
-            public int compare(User user1, User user2) {
-                if(user1 == user2 || user1.getCreatingDate().getTime() == user2.getCreatingDate().getTime()){
-                    return 0;
-                }else if(user1.getCreatingDate().getTime() > user2.getCreatingDate().getTime()){
-                    return -1;
-                }else {
-                    return 1;
-                }
-            }
-        });
     }
 
     public List<User> getUsers() {

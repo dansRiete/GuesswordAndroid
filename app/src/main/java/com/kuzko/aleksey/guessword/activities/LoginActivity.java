@@ -12,7 +12,11 @@ import android.widget.TextView;
 
 import com.kuzko.aleksey.guessword.MyApplication;
 import com.kuzko.aleksey.guessword.R;
+import com.kuzko.aleksey.guessword.datamodel.User;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -68,11 +72,13 @@ public class LoginActivity extends LoggerActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        List<String> availableUsers = application.retrieveUsersLogins();
+        List<User> availableUsers = application.getUsers();
         if(availableUsers.isEmpty()){
             editTextLoginUserPassword.setVisibility(View.INVISIBLE);
         }
-        userArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, availableUsers);
+        sortUsersByCreatingDate(availableUsers);
+
+        userArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, retrieveLogins(availableUsers));
         userArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerUsersList.setAdapter(userArrayAdapter);
     }
@@ -91,6 +97,36 @@ public class LoginActivity extends LoggerActivity {
             editTextLoginUserPassword.setError("Wrong password");
             editTextLoginUserPassword.requestFocus();
         }
+    }
+
+    private void sortUsersByCreatingDate(List<User> usersToBeSorted){
+        Collections.sort(usersToBeSorted, new Comparator<User>() {
+            @Override
+            public int compare(User user1, User user2) {
+
+                if(user1.getLastEnter() == null && user2.getLastEnter() == null){
+                    return 0/*user1.getCreatingDate().compareTo(user2.getCreatingDate())*/;
+                }else if(user1.getLastEnter() == null && user2.getLastEnter() != null){
+                    return 1;
+                }else if(user1.getLastEnter() != null && user2.getLastEnter() == null){
+                    return -1;
+                }else if(user1 == user2 || user1.getLastEnter().equals(user2.getLastEnter())){
+                    return 0/*user1.getCreatingDate().compareTo(user2.getCreatingDate())*/;
+                }else if(user1.getLastEnter().after(user2.getLastEnter())){
+                    return -1;
+                }else {
+                    return 1;
+                }
+            }
+        });
+    }
+
+    public List<String> retrieveLogins(List<User> users) {
+        ArrayList<String> logins = new ArrayList<>();
+        for(User user : users){
+            logins.add(/*(hasUserPassword(user) ? "\uD83D\uDD12" : "") +*/ user.getLogin());
+        }
+        return logins;
     }
 
     private void switchToLearnActivity(){

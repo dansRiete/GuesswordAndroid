@@ -29,6 +29,17 @@ public class User implements Serializable {
     @DatabaseField()
     private Date creatingDate;
 
+    public Date getLastEnter() {
+        return lastEnter;
+    }
+
+    public void setLastEnter(Date lastEnter) {
+        this.lastEnter = lastEnter;
+    }
+
+    @DatabaseField
+    private Date lastEnter;
+
     public User(){}
 
     public User(String login, String password){

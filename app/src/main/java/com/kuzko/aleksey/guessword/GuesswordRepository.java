@@ -1,5 +1,7 @@
 package com.kuzko.aleksey.guessword;
 
+import android.util.Log;
+
 import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.database.dao.PhraseDao;
 import com.kuzko.aleksey.guessword.database.dao.QuestionDao;
@@ -19,6 +21,11 @@ import java.util.Random;
 public class GuesswordRepository {
 
     private static GuesswordRepository instance;
+
+    public List<Phrase> getAllPhrases() {
+        return allPhrases;
+    }
+
     private List<Phrase> allPhrases;
     private static MyApplication application;
     private List<Question> todaysQuestions;
@@ -37,7 +44,9 @@ public class GuesswordRepository {
         try {
             phraseDao = HelperFactory.getHelper().getPhraseDao();
             questionDao = HelperFactory.getHelper().getQuestionDao();
-            allPhrases = phraseDao.queryForAll();
+//            QueryBuilder<Phrase, Long> queryBuilder = phraseDao.queryBuilder().where().eq("user_id" , application.retrieveActiveUser().getLogin());
+            allPhrases = phraseDao.queryForEq("user_id" , application.retrieveActiveUser().getLogin());
+            Log.d(getClass().getSimpleName(), "allPhrases.size = " + allPhrases.size());
             todaysQuestions = questionDao.queryBuilder().orderBy("askDate", false).query();
             for(Question question : todaysQuestions){
                 question.setAnswered(true);
@@ -217,5 +226,10 @@ public class GuesswordRepository {
 
     public List<Question> getTodaysQuestions() {
         return todaysQuestions;
+    }
+
+    public static void close(){
+        instance = null;
+        application = null;
     }
 }
