@@ -23,20 +23,17 @@ public class LearnActivity extends DrawerActivity implements View.OnClickListene
     private Button answerButton, buttonPreviousWrong, buttonPreviousRight, buttonIDoNotKnow, buttonIKnow;
     private EditText editTextAnswer;
     private QuestionsRecyclerAdapter questionsRecyclerAdapter;
-    private GuesswordRepository repository;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-//        outState.putSerializable(ASKED_PHRASES_LOG, askedPhrasesLog);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i(getLocalClassName(), "onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn);
-        repository = GuesswordRepository.getInstance((MyApplication) getApplication());
+        GuesswordRepository.init((MyApplication) getApplication());
         answerButton = (Button) findViewById(R.id.buttonAnswer);
         buttonPreviousWrong = (Button) findViewById(R.id.buttonPreviousWrong);
         buttonPreviousRight = (Button) findViewById(R.id.buttonPreviousRight);
@@ -48,7 +45,7 @@ public class LearnActivity extends DrawerActivity implements View.OnClickListene
         buttonIKnow.setOnClickListener(this);
         buttonPreviousRight.setOnClickListener(this);
         buttonIDoNotKnow.setOnClickListener(this);
-        questionsRecyclerAdapter = new QuestionsRecyclerAdapter(repository.getTodaysQuestions(), this);
+        questionsRecyclerAdapter = new QuestionsRecyclerAdapter(GuesswordRepository.getInstance().getTodaysQuestions(), this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);    // If confident of rec.view layout size isn't changed by content
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -59,7 +56,7 @@ public class LearnActivity extends DrawerActivity implements View.OnClickListene
 
     private void newQuestion(){
         try {
-            repository.askQuestion();
+            GuesswordRepository.getInstance().askQuestion();
         } catch (EmptyCollectionException e) {
             Log.w(getLocalClassName(), "Phrases collection is empty");
             Toast.makeText(this, "Phrases collection is empty", Toast.LENGTH_LONG).show();
@@ -71,8 +68,8 @@ public class LearnActivity extends DrawerActivity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        Question currentQuestion = repository.getCurrentQuestion();
-        Question previousQuestion = repository.getPreviousQuestion();
+        Question currentQuestion = GuesswordRepository.getInstance().getCurrentQuestion();
+        Question previousQuestion = GuesswordRepository.getInstance().getPreviousQuestion();
         switch (v.getId()){
             case R.id.buttonAnswer:
                 if(currentQuestion != null) {
@@ -114,7 +111,9 @@ public class LearnActivity extends DrawerActivity implements View.OnClickListene
     @Override
     protected void onResume() {
         super.onResume();
-        if(repository.getTodaysQuestions().size() == 0 || repository.getCurrentQuestion().isAnswered()){
+        //TODO After first time adding phrase and switching from EditActivity newQuestion isn't invoked
+        if(GuesswordRepository.getInstance().getTodaysQuestions().size() == 0 ||
+                GuesswordRepository.getInstance().getCurrentQuestion().isAnswered()){
             newQuestion();
         }
     }

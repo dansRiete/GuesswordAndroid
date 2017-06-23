@@ -110,7 +110,7 @@ public class Question implements Serializable {
     public static Question compose(Phrase askedPhrase) {
         System.out.println("CALL: compose(Phrase askedPhrase, PhrasesRepository dbHelper) from Question");
         if (askedPhrase == null) {
-            throw new IllegalArgumentException("Phrases foreign and native literals can not be null");
+            throw new IllegalArgumentException("Could not compose. Asked phrase was null");
         }
         return new Question(askedPhrase);
     }

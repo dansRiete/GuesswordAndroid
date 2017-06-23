@@ -34,6 +34,7 @@ public class MyApplication extends Application {
     @Override
     public void onTerminate() {
         HelperFactory.releaseHelper();
+        GuesswordRepository.close();
         super.onTerminate();
     }
 
@@ -68,7 +69,7 @@ public class MyApplication extends Application {
     }
 
     private @Nullable User retrieveUserByLogin(String login){
-        if(login == null){
+        if(login == null || login.equals("")){
             return null;
         }
         for(User currentUser : users){
@@ -94,19 +95,16 @@ public class MyApplication extends Application {
         return true;
     }
 
-    public String retrieveActiveUserLogin(){
+    public User retrieveLoggedUser(){
         SharedPreferences sPref = getSharedPreferences(MyApplication.class.getName(), MODE_PRIVATE);
-        return sPref.getString(LOGGED_USER_SPREF_TAG, null);
-    }
-
-    public User retrieveActiveUser(){
-        return retrieveUserByLogin(retrieveActiveUserLogin());
+        String loggedUserLogin = sPref.getString(LOGGED_USER_SPREF_TAG, null);
+        return retrieveUserByLogin(loggedUserLogin);
     }
 
     public void registerNewUser(User createdUser) throws NicknameExistsException{
 
-        for(User curentUser : users){
-            if(curentUser.getLogin().equals(createdUser.getLogin())){
+        for(User currentUser : users){
+            if(currentUser.getLogin().equals(createdUser.getLogin())){
                 throw new NicknameExistsException();
             }
         }

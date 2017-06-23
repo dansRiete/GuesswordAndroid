@@ -2,7 +2,7 @@
     <string name="app_name">Guessword</string>
     <string name="title_activity_learn">LearnActivity</string>
     <string name="string_incorrect_login_password">Incorrect login/password combination</string>
-    <string name="string_hint_answerField">Enter answer</string>
+    <string name="string_hint_answerField">Enter the answer</string>
     <string name="string_button_nextButt">Next</string>
     <string name="button_previous_wrong">Prev -</string>
     <string name="button_previous_right">Prev +</string>

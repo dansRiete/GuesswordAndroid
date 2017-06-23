@@ -48,7 +48,7 @@ public class DrawerActivity extends LoggerActivity implements NavigationView.OnN
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         TextView userHeaderName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_drawer_textview);
-        userHeaderName.setText(application.retrieveActiveUserLogin());
+        userHeaderName.setText(application.retrieveLoggedUser().getLogin());
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 

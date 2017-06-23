@@ -41,14 +41,31 @@ public class LoginActivity extends LoggerActivity {
         Button buttonLogin = (Button) findViewById(R.id.buttonLogin);
         TextView textViewCreateNewUser = (TextView) findViewById(R.id.textViewCreateNewUser);
 
-        if(application.retrieveActiveUserLogin() != null && !application.retrieveActiveUserLogin().equals("")){
+        if(application.retrieveLoggedUser() != null){
             //TODO remove login activity from backstack
-            startActivity(new Intent(this, LearnActivity.class));
+            startActivity(new Intent(this, LearnActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         }
 
         editTextLoginUserPassword = (EditText) findViewById(R.id.editTextLoginUserPassword);
         spinnerUsersList = (Spinner) findViewById(R.id.spinnerUsersList);
-        buttonLogin.setOnClickListener(this::attemptLogin);
+        buttonLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextLoginUserPassword.setError(null);
+                String login = (String) spinnerUsersList.getSelectedItem();
+                String password = editTextLoginUserPassword.getText().toString();
+
+                if(login == null){
+                    //Do nothing, user isn't selected
+                }else if (application.login(login, password)) {
+                    switchToLearnActivity();
+                } else {
+                    editTextLoginUserPassword.setError("Wrong password");
+                    editTextLoginUserPassword.requestFocus();
+                }
+            }
+        });
+//        buttonLogin.setOnClickListener(this::attemptLogin);
         textViewCreateNewUser.setOnClickListener(this::switchToRegisterActivity);
 
         spinnerUsersList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

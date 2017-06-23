@@ -44,8 +44,7 @@ public class GuesswordRepository {
         try {
             phraseDao = HelperFactory.getHelper().getPhraseDao();
             questionDao = HelperFactory.getHelper().getQuestionDao();
-//            QueryBuilder<Phrase, Long> queryBuilder = phraseDao.queryBuilder().where().eq("user_id" , application.retrieveActiveUser().getLogin());
-            allPhrases = phraseDao.queryForEq("user_id" , application.retrieveActiveUser().getLogin());
+            allPhrases = phraseDao.queryForEq("user_id" , application.retrieveLoggedUser().getLogin());
             Log.d(getClass().getSimpleName(), "allPhrases.size = " + allPhrases.size());
             todaysQuestions = questionDao.queryBuilder().orderBy("askDate", false).query();
             for(Question question : todaysQuestions){
@@ -59,7 +58,7 @@ public class GuesswordRepository {
 
     public static GuesswordRepository getInstance(){
         if(application == null){
-            throw new IllegalStateException("You must invoke getInstance(MyApplication _application) first!");
+            throw new IllegalStateException("You must invoke GuesswordRepository.init() first!");
         }
         if(instance == null){
             instance = new GuesswordRepository();
@@ -69,12 +68,8 @@ public class GuesswordRepository {
 
 
 
-    public static GuesswordRepository getInstance(MyApplication _application){
+    public static void init(MyApplication _application){
         application = _application;
-        if(instance == null){
-            instance = new GuesswordRepository();
-        }
-        return instance;
     }
 
     public Question askQuestion() throws EmptyCollectionException, SQLException{
@@ -104,7 +99,13 @@ public class GuesswordRepository {
         if(allPhrases.isEmpty()){
             throw new EmptyCollectionException();
         }
-        return retrievePhraseByIndex(random.nextInt(maxPhraseIndex));
+        int randomIndex = random.nextInt(maxPhraseIndex);
+        Phrase phrase = retrievePhraseByIndex(randomIndex);
+        if(phrase == null){
+            throw new RuntimeException("Retrieved phase was null. RandomIndex = " + randomIndex +
+                    ", maxPhraseIndex = " + maxPhraseIndex);
+        }
+        return phrase;
     }
 
     public void createPhrase(Phrase addedPhrase){
@@ -123,7 +124,8 @@ public class GuesswordRepository {
     private Phrase retrievePhraseByIndex(int index) {
 
         for (Phrase phrase : allPhrases) {
-            if (phrase.isInList(selectedLabels) && index >= phrase.getIndexStart() && index <= phrase.getIndexEnd()) {
+
+            if (index >= phrase.getIndexStart() && index <= phrase.getIndexEnd()) {
                 return phrase;
             }
         }
