@@ -41,6 +41,7 @@ public class GuesswordRepository {
     private GuesswordRepository(){
 
         try {
+
             phraseDao = HelperFactory.getHelper().getPhraseDao();
             questionDao = HelperFactory.getHelper().getQuestionDao();
             allPhrases = phraseDao.queryForEq("user_id" , application.retrieveLoggedUser().getLogin());

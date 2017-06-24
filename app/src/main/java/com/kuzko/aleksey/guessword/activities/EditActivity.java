@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class EditActivity extends DrawerActivity implements View.OnClickListener  {
 
@@ -32,15 +33,12 @@ public class EditActivity extends DrawerActivity implements View.OnClickListener
     private MyApplication application;
     private AlertDialog alertDialog;
 
-    public static class PhrasesAdapter extends RecyclerView.Adapter<PhrasesAdapter.ViewHolder> {
+    private static class PhrasesAdapter extends RecyclerView.Adapter<PhrasesAdapter.ViewHolder> {
 
         private List<Phrase> phrases = new ArrayList<>();
         private Context context;
-        private final static String CREATION_PHRASE_DATE_TEMPLATE = "dd/MM/y";
-        private final static String LAST_ACCESS_DATE_TEMPLATE = "dd/MM/y HH:mm";
-        private final static String MULTIPLIER_AND_PROB_FORMAT = "%1$,.2f";
 
-        public PhrasesAdapter(List<Phrase> dataset, Context context) {
+        private PhrasesAdapter(List<Phrase> dataset, Context context) {
             this.phrases = dataset;
             this.context = context;
         }
@@ -65,10 +63,6 @@ public class EditActivity extends DrawerActivity implements View.OnClickListener
             }
         }
 
-        public Phrase retrieveArticle(int position){
-            return phrases.get(position);
-        }
-
         @Override
         public PhrasesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_phrases_edit_item, parent, false);
@@ -88,19 +82,19 @@ public class EditActivity extends DrawerActivity implements View.OnClickListener
                     (" [" + currentPhrase.getTranscription() + "]");
 
             String createdDate = currentPhrase.getCollectionAddingDateTime() != null ?
-                    new SimpleDateFormat(CREATION_PHRASE_DATE_TEMPLATE, Locale.ENGLISH).format(currentPhrase.getCollectionAddingDateTime()) :
+                    new SimpleDateFormat(context.getString(R.string.creatianDate_template_format), Locale.ENGLISH).format(currentPhrase.getCollectionAddingDateTime()) :
                     context.getString(R.string.unknown_date);
 
             String lastAccessDate = currentPhrase.getLastAccessDateTime() != null ?
-                    new SimpleDateFormat(LAST_ACCESS_DATE_TEMPLATE, Locale.ENGLISH).format(currentPhrase.getLastAccessDateTime()) :
+                    new SimpleDateFormat(context.getString(R.string.lastAccessDate_templateFormat), Locale.ENGLISH).format(currentPhrase.getLastAccessDateTime()) :
                     context.getString(R.string.never_accessed);
 
             holder.textViewPhraseAdapterLabel.setText(label);
             holder.textViewPhraseAdapterCreatedDate.setText(createdDate);
             holder.textViewPhraseAdapterAccessDate.setText(lastAccessDate);
-            holder.textViewPhraseAdapterMultiplier.setText(String.format(Locale.getDefault(), MULTIPLIER_AND_PROB_FORMAT, currentPhrase.getMultiplier()));
+            holder.textViewPhraseAdapterMultiplier.setText(String.format(Locale.getDefault(), context.getString(R.string.multiplier_and_probFactor_format), currentPhrase.getMultiplier()));
             holder.textViewRecViewQuestion.setText(currentPhrase.getForeignWord() + " - " + currentPhrase.getNativeWord() + transcription );
-            holder.textViewPhraseAdapterProb.setText(String.format(Locale.getDefault(), MULTIPLIER_AND_PROB_FORMAT, currentPhrase.getProbabilityFactor()));
+            holder.textViewPhraseAdapterProb.setText(String.format(Locale.getDefault(), context.getString(R.string.multiplier_and_probFactor_format), currentPhrase.getProbabilityFactor()));
 
             if(!label.equals(context.getString(R.string.no_label))){
                 holder.textViewPhraseAdapterLabel.setTextColor(ContextCompat.getColor(context, R.color.colorGreen));
@@ -142,7 +136,7 @@ public class EditActivity extends DrawerActivity implements View.OnClickListener
         super.onStart();
         phrasesAdapter = new PhrasesAdapter(GuesswordRepository.getInstance().getAllPhrases(), this);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.phrases_edit_recycler_view);
-        mRecyclerView.setHasFixedSize(true);    // If confident of rec.view layout size isn't changed by content
+        mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(phrasesAdapter);
@@ -152,17 +146,18 @@ public class EditActivity extends DrawerActivity implements View.OnClickListener
 
         alertDialog = new AlertDialog.Builder(this)
                 .setView(R.layout.phrases_add_dialog_layout)
-                .setTitle("Add phrase")
+                .setTitle(R.string.dialogTitle_addPhrase)
                 .setPositiveButton(R.string.save_dialog_button, null) //Set to null. We override the onclick
                 .create();
 
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(final DialogInterface dialog) {
-                final EditText editTextDialogForeignWord = (EditText) alertDialog.findViewById(R.id.editTextDialogForeingWord);
-                final EditText editTextDialogNativeWord = (EditText) alertDialog.findViewById(R.id.editTextDialogNativeWord);
-                final EditText editTextDialogTranscription = (EditText) alertDialog.findViewById(R.id.editTextDialogTranscription);
-                final EditText editTextDialogLabel = (EditText) alertDialog.findViewById(R.id.editTextDialogLabel);
+
+                final EditText editTextDialogForeignWord = checkNotNull((EditText) alertDialog.findViewById(R.id.editTextDialogForeingWord));
+                final EditText editTextDialogNativeWord = checkNotNull((EditText) alertDialog.findViewById(R.id.editTextDialogNativeWord));
+                final EditText editTextDialogTranscription = checkNotNull((EditText) alertDialog.findViewById(R.id.editTextDialogTranscription));
+                final EditText editTextDialogLabel = checkNotNull((EditText) alertDialog.findViewById(R.id.editTextDialogLabel));
 
                 editTextDialogForeignWord.setText("");
                 editTextDialogForeignWord.requestFocus();
@@ -191,7 +186,6 @@ public class EditActivity extends DrawerActivity implements View.OnClickListener
                         }else {
                             Phrase addedPhrase = new Phrase(givenForeignWord, givenNativeWord, givenTranscription,
                                     givenLabel, application.retrieveLoggedUser());
-//                    phrasesAdapter.add(addedPhrase);
                             GuesswordRepository.getInstance().createPhrase(addedPhrase);
                             phrasesAdapter.notifyDataSetChanged();
                             dialog.dismiss();

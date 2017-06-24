@@ -48,4 +48,9 @@
     </string>
     <string name="drawer_item_menu_logout">Logout</string>
     <string name="no_available_users_msg">No available users</string>
+    <string name="multiplier_and_probFactor_format">%1$,.2f</string>
+    <string name="creatianDate_template_format">dd/MM/y</string>
+    <string name="lastAccessDate_templateFormat">dd/MM/y HH:mm</string>
+    <string name="dialogTitle_addPhrase">Add phrase</string>
+    <string name="questionAdapter_timeFormat">HH:mm:ss</string>
 </resources>
