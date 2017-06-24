@@ -5,8 +5,9 @@ import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.kuzko.aleksey.guessword.data.GuesswordRepository;
 import com.kuzko.aleksey.guessword.database.HelperFactory;
-import com.kuzko.aleksey.guessword.datamodel.User;
+import com.kuzko.aleksey.guessword.data.User;
 import com.kuzko.aleksey.guessword.exceptions.NicknameExistsException;
 
 import java.sql.SQLException;

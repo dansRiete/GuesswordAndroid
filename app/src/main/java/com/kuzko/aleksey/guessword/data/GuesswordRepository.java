@@ -1,12 +1,11 @@
-package com.kuzko.aleksey.guessword;
+package com.kuzko.aleksey.guessword.data;
 
 import android.util.Log;
 
+import com.kuzko.aleksey.guessword.MyApplication;
 import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.database.dao.PhraseDao;
 import com.kuzko.aleksey.guessword.database.dao.QuestionDao;
-import com.kuzko.aleksey.guessword.datamodel.Phrase;
-import com.kuzko.aleksey.guessword.datamodel.Question;
 import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
 
 import java.sql.SQLException;

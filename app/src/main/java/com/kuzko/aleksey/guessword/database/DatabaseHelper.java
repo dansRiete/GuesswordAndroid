@@ -10,9 +10,9 @@ import com.j256.ormlite.table.TableUtils;
 import com.kuzko.aleksey.guessword.database.dao.PhraseDao;
 import com.kuzko.aleksey.guessword.database.dao.QuestionDao;
 import com.kuzko.aleksey.guessword.database.dao.UserDao;
-import com.kuzko.aleksey.guessword.datamodel.Phrase;
-import com.kuzko.aleksey.guessword.datamodel.Question;
-import com.kuzko.aleksey.guessword.datamodel.User;
+import com.kuzko.aleksey.guessword.data.Phrase;
+import com.kuzko.aleksey.guessword.data.Question;
+import com.kuzko.aleksey.guessword.data.User;
 
 import java.sql.SQLException;
 

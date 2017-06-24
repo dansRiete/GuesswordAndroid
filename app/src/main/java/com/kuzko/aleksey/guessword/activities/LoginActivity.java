@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.kuzko.aleksey.guessword.MyApplication;
 import com.kuzko.aleksey.guessword.R;
-import com.kuzko.aleksey.guessword.datamodel.User;
+import com.kuzko.aleksey.guessword.data.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,7 +66,14 @@ public class LoginActivity extends LoggerActivity {
             }
         });
 //        buttonLogin.setOnClickListener(this::attemptLogin);
-        textViewCreateNewUser.setOnClickListener(this::switchToRegisterActivity);
+        textViewCreateNewUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(
+                        new Intent(LoginActivity.this, RegisterActivity.class).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                );
+            }
+        });
 
         spinnerUsersList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -153,9 +160,7 @@ public class LoginActivity extends LoggerActivity {
     }
 
     private void switchToRegisterActivity(View v){
-        startActivity(
-                new Intent(this, RegisterActivity.class).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-        );
+
     }
 
 

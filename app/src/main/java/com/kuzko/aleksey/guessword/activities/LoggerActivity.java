@@ -11,7 +11,7 @@ import android.util.Log;
 /**
  * For debug purposes only
  */
-public class LoggerActivity extends AppCompatActivity {
+public abstract class LoggerActivity extends AppCompatActivity {
 
     private void log(String methodName){
         Log.i(getClass().getSimpleName(), methodName + "()");

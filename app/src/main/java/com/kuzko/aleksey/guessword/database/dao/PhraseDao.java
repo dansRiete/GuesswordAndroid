@@ -2,7 +2,7 @@ package com.kuzko.aleksey.guessword.database.dao;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
-import com.kuzko.aleksey.guessword.datamodel.Phrase;
+import com.kuzko.aleksey.guessword.data.Phrase;
 
 import java.sql.SQLException;
 import java.util.List;

@@ -23,7 +23,7 @@ import com.kuzko.aleksey.guessword.R;
  * Created by Aleks on 17.06.2017.
  */
 
-public class DrawerActivity extends LoggerActivity implements NavigationView.OnNavigationItemSelectedListener {
+public abstract class DrawerActivity extends LoggerActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     protected LinearLayout fullLayout;
     protected FrameLayout actContent;

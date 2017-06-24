@@ -1,7 +1,6 @@
-package com.kuzko.aleksey.guessword.datamodel;
+package com.kuzko.aleksey.guessword.data;
 
 import com.j256.ormlite.field.DatabaseField;
-import com.kuzko.aleksey.guessword.GuesswordRepository;
 import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.utils.AnswerChecker;
 import com.kuzko.aleksey.guessword.utils.Hints;
