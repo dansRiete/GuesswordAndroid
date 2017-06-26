@@ -1,13 +1,11 @@
 package com.kuzko.aleksey.guessword.data;
 
 import com.j256.ormlite.field.DatabaseField;
-import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.utils.AnswerChecker;
 import com.kuzko.aleksey.guessword.utils.Hints;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -149,12 +147,18 @@ public class Question implements Serializable {
             askedPhrase.setMultiplier(afterAnswerProbabilityMultiplier);
         }
 
-        try {
-            HelperFactory.getHelper().getPhraseDao().update(askedPhrase);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
+        /*new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HelperFactory.getHelper().getPhraseDao().update(askedPhrase);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException();
+                }
+            }
+        }).start();*/
+
 
         this.afterAnswerStartIndex = askedPhrase.getIndexStart();
         this.afterAnswerEndIndex = askedPhrase.getIndexEnd();
@@ -167,7 +171,7 @@ public class Question implements Serializable {
         }*//* else {
 
         }*/
-        update();
+        updateDataInDb();
         this.answered = true;
         System.out.println("CALL: rightAnswer() from Question - " + this + ", isAnswered()=" + isAnswered() + ", answerCorrect=" + answerCorrect);
 
@@ -194,12 +198,17 @@ public class Question implements Serializable {
             askedPhrase.setMultiplier(afterAnswerProbabilityMultiplier);
         }
 
-        try {
-            HelperFactory.getHelper().getPhraseDao().update(askedPhrase);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
+        /*new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HelperFactory.getHelper().getPhraseDao().update(askedPhrase);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException();
+                }
+            }
+        }).start();*/
 
         this.afterAnswerStartIndex = askedPhrase.getIndexStart();
         this.afterAnswerEndIndex = askedPhrase.getIndexEnd();
@@ -208,22 +217,18 @@ public class Question implements Serializable {
         if (answered) {
             this.answerLiteral = null;
         }
-        update();
+        updateDataInDb();
         this.answered = true;
 
     }
 
-    public void update() {
-        try {
-            if (answered) {
+    public void updateDataInDb() {
+        if (answered) {
                 GuesswordRepository.getInstance().updateQuestion(this);
             } else {
                 GuesswordRepository.getInstance().persistQuestion(this);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Exception during updating phrase in DB");
-        }
+
     }
 
     private boolean lastInLog() {

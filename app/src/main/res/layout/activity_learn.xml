@@ -35,6 +35,7 @@
             android:inputType="text"
             />
         <Button
+            android:onClick="answerButtonClick"
             android:id="@+id/buttonAnswer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,25 +56,25 @@
             android:id="@+id/buttonPreviousWrong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="previousWrongButtonClicked"
+            android:onClick="previousWrongButtonClick"
             android:text="@string/button_previous_wrong"/>
         <Button
             android:id="@+id/buttonPreviousRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="previousRightButtonClicked"
+            android:onClick="previousRightButtonClick"
             android:text="@string/button_previous_right"/>
         <Button
             android:id="@+id/buttonIDoNotKnow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="wrongButtonClicked"
+            android:onClick="wrongButtonClick"
             android:text="@string/button_i_dont_know"/>
         <Button
             android:id="@+id/buttonIKnow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="rightButtonClicked"
+            android:onClick="rightButtonClick"
             android:text="@string/button_i_know"/>
 
     </LinearLayout>

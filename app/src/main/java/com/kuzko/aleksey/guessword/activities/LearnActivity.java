@@ -1,6 +1,7 @@
 package com.kuzko.aleksey.guessword.activities;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,17 +22,16 @@ import com.kuzko.aleksey.guessword.data.Phrase;
 import com.kuzko.aleksey.guessword.data.Question;
 import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class LearnActivity extends DrawerActivity implements View.OnClickListener {
+public class LearnActivity extends DrawerActivity {
 
-    private Button answerButton, buttonPreviousWrong, buttonPreviousRight, buttonIDoNotKnow, buttonIKnow;
     private EditText editTextAnswer;
     private QuestionsAdapter questionsAdapter;
+
     private static class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.ViewHolder> {
 
         private List<Question> questions = new ArrayList<>();
@@ -125,87 +124,105 @@ public class LearnActivity extends DrawerActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn);
-
-        GuesswordRepository.init((MyApplication) getApplication());
-        answerButton = (Button) findViewById(R.id.buttonAnswer);
-        buttonPreviousWrong = (Button) findViewById(R.id.buttonPreviousWrong);
-        buttonPreviousRight = (Button) findViewById(R.id.buttonPreviousRight);
-        buttonIDoNotKnow = (Button) findViewById(R.id.buttonIDoNotKnow);
-        buttonIKnow = (Button) findViewById(R.id.buttonIKnow);
         editTextAnswer = (EditText) findViewById(R.id.editTextAnswer);
-        answerButton.setOnClickListener(this);
-        buttonPreviousWrong.setOnClickListener(this);
-        buttonIKnow.setOnClickListener(this);
-        buttonPreviousRight.setOnClickListener(this);
-        buttonIDoNotKnow.setOnClickListener(this);
-        questionsAdapter = new QuestionsAdapter(GuesswordRepository.getInstance().getTodaysQuestions(), this);
+
+        //TODO show progress bar
+        new AsyncTask<Void, Void, List<Question>>(){
+            @Override
+            protected List<Question> doInBackground(Void... params) {
+                GuesswordRepository.init((MyApplication) getApplication());
+                return GuesswordRepository.getInstance().getTodaysQuestions();
+            }
+
+            @Override
+            protected void onPostExecute(List<Question> todayAskedQuestions) {
+                super.onPostExecute(todayAskedQuestions);
+                initRecyclerAdapter(todayAskedQuestions);
+                //TODO hide progress bar
+            }
+        }.execute();
+    }
+
+    private void initRecyclerAdapter(List<Question> todayAskedQuestions){
+        questionsAdapter = new QuestionsAdapter(todayAskedQuestions, this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(questionsAdapter);
-
+        if(questionsListIsEmpty() || lastQuestionIsAnswered()){
+            newQuestion();
+            questionsAdapter.notifyDataSetChanged();
+        }
     }
 
     private void newQuestion(){
         try {
             GuesswordRepository.getInstance().askQuestion();
         } catch (EmptyCollectionException e) {
-            Log.w(getLocalClassName(), "Phrases collection is empty");
+            Log.w(getClass().getSimpleName(), "Phrases collection is empty");
             Toast.makeText(this, "Phrases collection is empty", Toast.LENGTH_LONG).show();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Exception during persisting question in DB");
         }
     }
 
-    @Override
-    public void onClick(View v) {
+    public void answerButtonClick(View view) {
         Question currentQuestion = GuesswordRepository.getInstance().getCurrentQuestion();
-        Question previousQuestion = GuesswordRepository.getInstance().getPreviousQuestion();
-        switch (v.getId()){
-            case R.id.buttonAnswer:
-                if(currentQuestion != null) {
-                    currentQuestion.answer(editTextAnswer.getText().toString());
-                    editTextAnswer.setText("");
-                    newQuestion();
-                    break;
-                }
-            case R.id.buttonIKnow:
-                if(currentQuestion != null){
-                    currentQuestion.rightAnswer();
-                    editTextAnswer.setText("");
-                    newQuestion();
-                }
-                break;
-            case R.id.buttonIDoNotKnow:
-                if(currentQuestion != null){
-                    currentQuestion.wrongAnswer();
-                    editTextAnswer.setText("");
-                    newQuestion();
-                }
-                break;
-            case R.id.buttonPreviousRight:
-                if(previousQuestion != null){
-                    previousQuestion.rightAnswer();
-                }
-                break;
-            case R.id.buttonPreviousWrong:
-                if(previousQuestion != null){
-                    previousQuestion.wrongAnswer();
-                }
-                break;
-            default:
-                break;
+        if(currentQuestion != null) {
+            currentQuestion.answer(editTextAnswer.getText().toString());
+            editTextAnswer.setText("");
+            newQuestion();
         }
         questionsAdapter.notifyDataSetChanged();
+    }
+
+    public void previousWrongButtonClick(View view) {
+        Question previousQuestion = GuesswordRepository.getInstance().getPreviousQuestion();
+        if(previousQuestion != null){
+            previousQuestion.wrongAnswer();
+        }
+        questionsAdapter.notifyDataSetChanged();
+    }
+
+    public void previousRightButtonClick(View view) {
+        Question previousQuestion = GuesswordRepository.getInstance().getPreviousQuestion();
+        if(previousQuestion != null){
+            previousQuestion.rightAnswer();
+        }
+        questionsAdapter.notifyDataSetChanged();
+    }
+
+    public void wrongButtonClick(View view) {
+        Question currentQuestion = GuesswordRepository.getInstance().getCurrentQuestion();
+        if(currentQuestion != null){
+            currentQuestion.wrongAnswer();
+            editTextAnswer.setText("");
+            newQuestion();
+        }
+        questionsAdapter.notifyDataSetChanged();
+    }
+
+    public void rightButtonClick(View view) {
+        Question currentQuestion = GuesswordRepository.getInstance().getCurrentQuestion();
+        if(currentQuestion != null){
+            currentQuestion.rightAnswer();
+            editTextAnswer.setText("");
+            newQuestion();
+        }
+        questionsAdapter.notifyDataSetChanged();
+    }
+
+    private boolean lastQuestionIsAnswered(){
+        return GuesswordRepository.getInstance().getCurrentQuestion().isAnswered();
+    }
+
+    private boolean questionsListIsEmpty(){
+        return GuesswordRepository.getInstance().getTodaysQuestions().size() == 0;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(GuesswordRepository.getInstance().getTodaysQuestions().size() == 0 ||
-                GuesswordRepository.getInstance().getCurrentQuestion().isAnswered()){
+        if(questionsAdapter != null && (questionsListIsEmpty() || lastQuestionIsAnswered())){
             newQuestion();
             questionsAdapter.notifyDataSetChanged();
         }

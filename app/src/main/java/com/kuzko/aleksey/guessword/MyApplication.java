@@ -8,7 +8,7 @@ import android.util.Log;
 import com.kuzko.aleksey.guessword.data.GuesswordRepository;
 import com.kuzko.aleksey.guessword.database.HelperFactory;
 import com.kuzko.aleksey.guessword.data.User;
-import com.kuzko.aleksey.guessword.exceptions.NicknameExistsException;
+import com.kuzko.aleksey.guessword.exceptions.LoginExistsException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class MyApplication extends Application {
                 }
             }catch (SQLException e){
                 e.printStackTrace();
-                throw new RuntimeException("update(currentUser) in MyApplication login() went wrong");
+                throw new RuntimeException("updateDataInDb(currentUser) in MyApplication login() went wrong");
             }
         }
         return false;
@@ -102,23 +102,6 @@ public class MyApplication extends Application {
         return retrieveUserByLogin(loggedUserLogin);
     }
 
-    public void registerNewUser(User createdUser) throws NicknameExistsException{
-
-        for(User currentUser : users){
-            if(currentUser.getLogin().equals(createdUser.getLogin())){
-                throw new NicknameExistsException();
-            }
-        }
-
-        try {
-            HelperFactory.getHelper().getUserDao().create(createdUser);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-        reloadUsers();
-    }
-
     private void writeLoggedUser(User user){
         SharedPreferences sPref = getSharedPreferences(MyApplication.class.getName(), MODE_PRIVATE);
         sPref.edit().putString(LOGGED_USER_SPREF_TAG, user.getLogin()).apply();
@@ -127,6 +110,23 @@ public class MyApplication extends Application {
     private void eraseLoggedUser(){
         SharedPreferences sPref = getSharedPreferences(MyApplication.class.getName(), MODE_PRIVATE);
         sPref.edit().putString(LOGGED_USER_SPREF_TAG, null).apply();
+    }
+
+    public void registerNewUser(final User createdUser) throws LoginExistsException {
+
+        for(User currentUser : users){
+            if(currentUser.getLogin().equals(createdUser.getLogin())){
+                throw new LoginExistsException();
+            }
+        }
+        try {
+            HelperFactory.getHelper().getUserDao().create(createdUser);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        reloadUsers();
+
     }
 
     private void reloadUsers(){

@@ -10,6 +10,7 @@ import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
 
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -45,11 +46,12 @@ public class GuesswordRepository {
             phraseDao = HelperFactory.getHelper().getPhraseDao();
             questionDao = HelperFactory.getHelper().getQuestionDao();
             allPhrases = phraseDao.queryForEq("user_id" , application.retrieveLoggedUser().getLogin());
-            Log.d(getClass().getSimpleName(), "allPhrases.size = " + allPhrases.size());
-            todaysQuestions = questionDao.queryBuilder().orderBy("askDate", false).query();
+            todaysQuestions = new LinkedList<>(questionDao.queryBuilder().orderBy("askDate", false).query());
             for(Question question : todaysQuestions){
                 question.setAnswered(true);
             }
+            Log.i(getClass().getSimpleName(), "GuesswordRepository init completed, allPhrases.size = " +
+                                              allPhrases.size() + ", todaysQuestions.size = " + todaysQuestions.size());
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Error during retrieving allPhrases collection from DB");
@@ -72,10 +74,11 @@ public class GuesswordRepository {
         application = _application;
     }
 
-    public Question askQuestion() throws EmptyCollectionException, SQLException{
-        Question askedQuestion = Question.compose(retrieveRandomPhrase());
+    public Question askQuestion() throws EmptyCollectionException{
+
+        Phrase randomPhrase = retrieveRandomPhrase();
+        Question askedQuestion = Question.compose(randomPhrase);
         todaysQuestions.add(0, askedQuestion);
-//        HelperFactory.getHelper().getQuestionDao().create(askedQuestion);
         return askedQuestion;
     }
 
@@ -133,14 +136,16 @@ public class GuesswordRepository {
     }
 
     private void reloadIndices() {
-        System.out.println("reloadIndices() from PhraseRepository");
+        Log.i(getClass().getSimpleName(), "reloadIndices() from PhraseRepository");
+
+        double NANOSECONDS_IN_ONE_MILLISECOND = 1000000;
 
         if(allPhrases.isEmpty()){
             return;
         }
 
         final long RANGE = 1_000_000_000;
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         double temp = 0;
         double indexOfTrained;     //Index of appearing learnt words
         double rangeOfUnTrained;  //Ranhe indices non learnt words
@@ -176,6 +181,7 @@ public class GuesswordRepository {
 
                 //If activeUntrainedPhrasesNumber == 0 then all words have been learnt, setting equal for all indices
                 if (activeUntrainedPhrasesNumber == 0) {
+                    Log.i(getClass().getSimpleName(), "All phrases are learnt");
 
                     indexStart = (int) (temp * RANGE);
                     currentPhrase.setIndexStart(indexStart);
@@ -211,19 +217,37 @@ public class GuesswordRepository {
                 }
             }
         }
-        System.out.println("CALL: reloadIndices() from PhrasesRepository," + " Indexes changed=" + modificatePhrasesIndicesNumber + ", Time taken " + (System.currentTimeMillis() - startTime) + "ms");
+        double timeTaken = ((double) (System.nanoTime() - startTime)) / NANOSECONDS_IN_ONE_MILLISECOND;
+        Log.i(getClass().getSimpleName(), modificatePhrasesIndicesNumber + " indexes were changed, " +
+                                          timeTaken + "ms taken");
     }
 
-    public void updateProb(Phrase askedPhrase) {
-
+    public void updateQuestion(final Question question) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HelperFactory.getHelper().getPhraseDao().update(question.getAskedPhrase());
+                    questionDao.update(question);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
-    public void updateQuestion(Question question) throws SQLException {
-        questionDao.update(question);
-    }
-
-    public void persistQuestion(Question question) throws SQLException {
-        questionDao.create(question);
+    public void persistQuestion(final Question question) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HelperFactory.getHelper().getPhraseDao().update(question.getAskedPhrase());
+                    questionDao.create(question);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     public List<Question> getTodaysQuestions() {

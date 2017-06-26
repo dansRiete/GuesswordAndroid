@@ -1,6 +1,7 @@
 package com.kuzko.aleksey.guessword.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,7 +13,7 @@ import android.widget.TextView;
 import com.kuzko.aleksey.guessword.MyApplication;
 import com.kuzko.aleksey.guessword.R;
 import com.kuzko.aleksey.guessword.data.User;
-import com.kuzko.aleksey.guessword.exceptions.NicknameExistsException;
+import com.kuzko.aleksey.guessword.exceptions.LoginExistsException;
 
 public class RegisterActivity extends LoggerActivity {
 
@@ -67,7 +68,7 @@ public class RegisterActivity extends LoggerActivity {
                 String password = editTextNewUsersPassword.getText().toString();
                 String passwordConfirmation = editTextNewUsersPasswordConfirm.getText().toString();
 
-                if((!password.isEmpty() || !password.isEmpty()) && !password.equals(passwordConfirmation)){
+                if(/*(!password.isEmpty() || !passwordConfirmation.isEmpty()) &&*/ !password.equals(passwordConfirmation)){
                     editTextNewUsersPasswordConfirm.setError("Password and it's confirmation do not match");
                     cancel = true;
                     focusView = editTextNewUsersPasswordConfirm;
@@ -82,25 +83,60 @@ public class RegisterActivity extends LoggerActivity {
                 if (cancel) {
                     focusView.requestFocus();
                 } else {
-                    try {
-                        User user = new User(login, password.equals("") ? null : password);
-                        application.registerNewUser(user);
-                        editTextNewUsersName.setText("");
-                        editTextNewUsersPassword.setText("");
-                        editTextNewUsersPasswordConfirm.setText("");
-                        if(application.login(login, password)){
-                            startActivity(new Intent(RegisterActivity.this, LearnActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                        }else {
-                            switchToLoginActivity();
-                        }
-                    } catch (NicknameExistsException e) {
-                        editTextNewUsersName.setError("Nickname already exists");
-                        editTextNewUsersName.requestFocus();
-                    }
+                    editTextNewUsersName.setText("");
+                    editTextNewUsersPassword.setText("");
+                    editTextNewUsersPasswordConfirm.setText("");
+                    //TODO showProgressBar at here
+                    asyncRegisterNewUser(login, password);
                 }
             }
         });
 
+    }
+
+    private void asyncRegisterNewUser(final String login, final String password){
+
+        final User user = new User(login, password.equals("") ? null : password);
+
+        new AsyncTask<Void, Void, Void>() {
+
+            Exception loginExists = null;
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    application.registerNewUser(user);
+                } catch (LoginExistsException e) {
+                    this.loginExists = e;
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                //TODO hideProgressBar at here
+                if(loginExists != null){
+                    editTextNewUsersName.setError("Nickname already exists");
+                    editTextNewUsersName.requestFocus();
+                }else {
+
+                    if (application.login(login, password)) {
+                        startActivity(
+                                new Intent(RegisterActivity.this, LearnActivity.class)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                                  Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        );
+                    } else {
+                        startActivity(
+                                new Intent(RegisterActivity.this, LoginActivity.class)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                                  Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        );
+                    }
+                }
+            }
+        }.execute();
     }
 
     @Override
