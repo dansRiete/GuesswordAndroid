@@ -9,6 +9,7 @@ import com.kuzko.aleksey.guessword.database.dao.QuestionDao;
 import com.kuzko.aleksey.guessword.exceptions.EmptyCollectionException;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,6 +109,7 @@ public class GuesswordRepository {
             throw new RuntimeException("Retrieved phase was null. RandomIndex = " + randomIndex +
                     ", maxPhraseIndex = " + maxPhraseIndex);
         }
+        phrase.setLastAccessDateTime(new Date(System.currentTimeMillis()));
         return phrase;
     }
 

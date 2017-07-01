@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.kuzko.aleksey.guessword.MyApplication;
 import com.kuzko.aleksey.guessword.R;
+import com.kuzko.aleksey.guessword.SettingsActivity;
 
 /**
  * Created by Aleks on 17.06.2017.
@@ -96,6 +97,10 @@ public abstract class DrawerActivity extends LoggerActivity implements Navigatio
             case R.id.drawer_item_menu_learn:
                 drawerLayout.closeDrawer(GravityCompat.START);
                 startActivity(new Intent(this, LearnActivity.class).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+                break;
+            case R.id.drawer_item_menu_settings:
+                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(this, SettingsActivity.class).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
                 break;
             case R.id.drawer_item_menu_logout:
                 drawerLayout.closeDrawer(GravityCompat.START);

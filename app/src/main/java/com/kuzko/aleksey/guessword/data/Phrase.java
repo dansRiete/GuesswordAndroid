@@ -166,7 +166,7 @@ public class Phrase implements Serializable {
     public Date getLastAccessDateTime() {
         return lastAccessDateTime;
     }
-    public void setLastAccessDateTime(Timestamp lastAccessDateTime){
+    public void setLastAccessDateTime(Date lastAccessDateTime){
         this.lastAccessDateTime = lastAccessDateTime;
     }
     public int getIndexStart() {

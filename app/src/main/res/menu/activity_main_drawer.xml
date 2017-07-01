@@ -10,6 +10,12 @@
         android:id="@+id/drawer_item_menu_edit"
         android:icon="@drawable/ic_playlist_add_black_48dp"
         android:title="@string/drawer_menu_item_edit_collection" />
+
+    <item
+        android:id="@+id/drawer_item_menu_settings"
+        android:icon="@drawable/ic_settings_black_48dp"
+        android:title="@string/drawer_menu_item_edit_collection" />
+
     <item
         android:id="@+id/drawer_item_menu_logout"
         android:icon="@drawable/exitcp"
