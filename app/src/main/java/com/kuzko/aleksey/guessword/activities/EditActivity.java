@@ -145,7 +145,7 @@ public class EditActivity extends DrawerActivity implements View.OnClickListener
     private void initDialog() {
 
         alertDialog = new AlertDialog.Builder(this)
-                .setView(R.layout.phrases_add_dialog_layout)
+                .setView(R.layout.dialog_addPhrase)
                 .setTitle(R.string.dialogTitle_addPhrase)
                 .setPositiveButton(R.string.save_dialog_button, null) //Set to null. We override the onclick
                 .create();

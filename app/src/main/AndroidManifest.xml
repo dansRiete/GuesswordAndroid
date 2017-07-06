@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.RegisterActivity"></activity>
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".activities.SettingsActivity"></activity>
     </application>
 
 </manifest>

@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.kuzko.aleksey.guessword.MyApplication;
 import com.kuzko.aleksey.guessword.R;
-import com.kuzko.aleksey.guessword.SettingsActivity;
 
 /**
  * Created by Aleks on 17.06.2017.

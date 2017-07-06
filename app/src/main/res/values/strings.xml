@@ -53,4 +53,6 @@
     <string name="lastAccessDate_templateFormat">dd/MM/y HH:mm</string>
     <string name="dialogTitle_addPhrase">Add phrase</string>
     <string name="questionAdapter_timeFormat">HH:mm:ss</string>
+    <string name="dialog_your_password">Your password</string>
+    <string name="dialog_title_password">Password</string>
 </resources>
